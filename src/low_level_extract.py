@@ -1,5 +1,5 @@
-from vision.LowFeatureExtractor import *
-from vision.Dataset import *
+from src.visual.models.LowFeatureExtractor import *
+from visual.Dataset import *
 from config.configs import *
 from utils.write import *
 

@@ -1,3 +1,6 @@
+#WARNING ALL THIS FILE HAVE TO BE DELETED!
+#USE THIS FILE AS A REFERENCE ONLY!
+
 from PIL import Image
 from config.configs import *
 import tensorflow as tf
@@ -8,9 +11,14 @@ import os
 
 class Dataset:
     def __init__(self, dataset, model_name='VGG19', resize=(224, 224), normalize=True):
+        # visual (?)
         self.directory = images_path.format(dataset)
+        # complete path to ex visual...
         self.filenames = os.listdir(self.directory)
+        # from here
+        # do: sort file name (improve this)
         self.filenames.sort(key=lambda x: int(x.split(".")[0]))
+
         self.num_samples = len(self.filenames)
         self.model_name = model_name
         self.resize = resize
@@ -48,6 +56,7 @@ class Dataset:
         return self.num_samples
 
     def __getitem__(self, idx):
+        # in father only the firm
         sample = Image.open(self.directory + self.filenames[idx])
 
         if sample.mode != 'RGB':

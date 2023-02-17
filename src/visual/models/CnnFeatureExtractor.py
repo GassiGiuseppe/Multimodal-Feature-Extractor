@@ -6,8 +6,9 @@ import numpy as np
 import os
 
 
+# convolution neural network
 class CnnFeatureExtractor:
-    def __init__(self, gpu, imagenet, model_name, output_layer, pca_dim, reshape=False):
+    def __init__(self, gpu, model_name, output_layer, reshape=False):
         self.model_name = model_name
         self.gpu = gpu
         self.device = torch.device("cuda:" + str(self.gpu) if self.gpu != '-1' else "cpu")

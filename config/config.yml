@@ -1,0 +1,14 @@
+- dataset: 'C:\Users\User\OneDrive\Desktop\UNI\TESI\DatasetPerTest'
+- gpu list: -1
+- items:
+    - input:
+      - visual: 'inputVisual'
+    - output:
+      - visual: 'outputVisual'
+
+    - model:
+        - visual: []
+
+
+
+#this is a comment

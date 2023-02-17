@@ -36,8 +36,8 @@ def parse_args():
 args = parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 
-from vision.CnnFeatureExtractor import *
-from vision.Dataset import *
+from src.visual.models.CnnFeatureExtractor import *
+from visual.Dataset import *
 from config.configs import *
 from utils.write import *
 from utils.read import *

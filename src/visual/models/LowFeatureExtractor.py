@@ -6,6 +6,7 @@ class LowFeatureExtractor:
     def __init__(self, args):
         self.num_bins = args.num_bins
 
+
     def extract_color_shape(self, sample):
 
         image, name = sample
