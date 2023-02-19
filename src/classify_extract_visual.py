@@ -37,7 +37,7 @@ args = parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 
 from src.visual.models.CnnFeatureExtractor import *
-from visual.Dataset import *
+from src.old.Dataset import *
 from config.configs import *
 from utils.write import *
 from utils.read import *

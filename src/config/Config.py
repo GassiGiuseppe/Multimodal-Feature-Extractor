@@ -85,7 +85,12 @@ class Config:
         if origin_of_elaboration in self.__data_dict:
             if type_of_extractions in self.__data_dict[origin_of_elaboration]['input'] and \
                     type_of_extractions in self.__data_dict[origin_of_elaboration]['output']:
-                return True
+                # in this case it's all right but must be checked that the values are not empty
+                input_value = self.__data_dict[origin_of_elaboration]['input'][type_of_extractions]
+                output_value = self.__data_dict[origin_of_elaboration]['output'][type_of_extractions]
+                if input_value is not None and output_value is not None:
+
+                    return True
         return False
 
     def paths_for_extraction(self, origin_of_elaboration, type_of_extraction):
@@ -105,3 +110,6 @@ class Config:
             return [models]
         else:
             return models
+
+    def get_dict(self):
+        return self.__data_dict

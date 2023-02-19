@@ -1,14 +1,32 @@
-- dataset: 'C:\Users\User\OneDrive\Desktop\UNI\TESI\DatasetPerTest'
+# CONFIGURATION FILE
+
+# how to use: write down only the thing you intend to use, leave blank all the others settings
+# DATASET is the main folder
+# GPU LIST is the list of gpu you intend to use, write -1 if you intend to use cpu
+# MODEL TEMPLATE: model_name: {}
+
+
+- dataset: 'D:\dati\uni\tesi\datasetFolder'
 - gpu list: -1
 - items:
     - input:
-      - visual: 'inputVisual'
+      - visual: 'inputVisualDummies'
+      - textual:
     - output:
-      - visual: 'outputVisual'
-
+      - visual: 'outputVisualDummies'
+      - textual:
     - model:
-        - visual: []
-
-
-
-#this is a comment
+        - visual: {
+                    'ResNet50':{output_layers: 'avg_pool', reshape:[32]}
+                  }
+        - textual: {}
+- interactions:
+    - input:
+        - visual:
+        - textual:
+    - output:
+        - visual:
+        - textual:
+    - model:
+        - visual: {}
+        - textual: {}
