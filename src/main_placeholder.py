@@ -19,6 +19,7 @@ def foo():
         for model in models.keys():
             print(model)
             visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'], model_name=model)
+            # WARNING: FOR NOW ONLY ONE MODEL ( in developin .. )
             model_layer = models[model]['output_layers']
             cnn_feature_extractor = CnnFeatureExtractor(model, model_layer)
             for index in range(visual_dataset.__len__()):
