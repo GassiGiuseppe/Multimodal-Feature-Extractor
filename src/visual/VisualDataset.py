@@ -32,7 +32,7 @@ class VisualDataset(DatasetFather, ABC):
             return norm_sample, np.array(norm_sample), self._filenames[idx]
         else:
             # ive changed it sample->norm_sample
-            return np.expand_dims(norm_sample, axis=0), np.array(norm_sample), self._filenames[idx]
+            return np.expand_dims(norm_sample, axis=0)
 
     def _pre_processing(self, sample):
         # resize

@@ -29,5 +29,5 @@ class DatasetFather:
         pass
 
     @abstractmethod
-    def _pre_processing(self, input_to_process):
+    def _pre_processing(self, sample):
         pass

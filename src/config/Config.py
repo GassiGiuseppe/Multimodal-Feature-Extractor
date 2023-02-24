@@ -11,6 +11,14 @@ class Config:
         self.__load_config_from_file()
 
     def __find_yaml_file_path(self, old_path):
+        """
+
+        Args:
+            old_path:
+
+        Returns:
+
+        """
         # the path can be:
         # a path only to the directory
         # a complete path to a yml/yaml, in this case must be verified that the extension is correct
