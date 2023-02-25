@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from src.utils.human_sorting import human_sort
 import os
+import numpy
 
 
 class DatasetFather:
@@ -23,6 +24,15 @@ class DatasetFather:
 
     def __len__(self):
         return self.__num_samples
+
+    def set_model(self, model):
+        self._model_name = model
+
+    def create_output_file(self, index, extracted_data, model_layer):
+        input_file_name = self._filenames[index].split('.')[0]
+        output_file_name = input_file_name + '_' + self._model_name + '_' + model_layer + '.npy'
+        path = os.path.join(self._output_directory_path, output_file_name)
+        numpy.save(path, extracted_data)
 
     @abstractmethod
     def __getitem__(self, idx):

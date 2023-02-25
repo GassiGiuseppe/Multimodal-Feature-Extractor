@@ -97,7 +97,6 @@ class Config:
                 input_value = self.__data_dict[origin_of_elaboration]['input'][type_of_extractions]
                 output_value = self.__data_dict[origin_of_elaboration]['output'][type_of_extractions]
                 if input_value is not None and output_value is not None:
-
                     return True
         return False
 
@@ -114,10 +113,28 @@ class Config:
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
         models = self.__data_dict[origin_of_elaboration]['model'][type_of_extractions]
-        if isinstance(models, str):
-            return [models]
-        else:
-            return models
+
+        for model in models:
+            # clean output_layers [it has to be always a list]
+            if not isinstance(models[model]['output_layers'], list):
+                # then it may be a str or an int, transform in a list and go on
+                models[model].update({'output_layers': [models[model]['output_layers']]})
+            # the tag framework is optional in the yaml file but is essential,
+            # so in case it does not exist its created here
+            if 'framework' in models[model].keys():
+                # check that the value exist, and it is not ''
+                value = models[model]['framework']
+                if value is not None and value != '':
+                    # then transform the value in a list
+                    value = [value]
+                    models[model].update({'framework': value})
+                else:
+                    raise ValueError('the framework tag in the yaml file is not written correctly')
+            else:
+                # add the framework tag with a list with both the frameworks
+                models[model].update({'framework': ['tensorflow', 'torch']})
+
+        return models
 
     def get_dict(self):
         return self.__data_dict

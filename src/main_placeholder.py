@@ -14,20 +14,27 @@ def foo():
     # NOTE FOR FUTURE DEVELOP: if these ifs are all the same, create a unified fun
 
     if config.has_config('items', 'visual'):
+        # get paths and models
         working_paths = config.paths_for_extraction('items', 'visual')
         models = config.get_models_list('items', 'visual')
+        # generate dataset and extractor
+        visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'])
+        cnn_feature_extractor = CnnFeatureExtractor(config.get_gpu())
         for model in models.keys():
-            print(model)
-            visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'], model_name=model)
-            # WARNING: FOR NOW ONLY ONE MODEL ( in developin .. )
-            model_layer = models[model]['output_layers']
-            cnn_feature_extractor = CnnFeatureExtractor(model, model_layer)
-            for index in range(visual_dataset.__len__()):
-                dataset_output = visual_dataset.__getitem__(index)
-                print(dataset_output)
-                extractor_output = cnn_feature_extractor.extract_feature(dataset_output)
-                print(extractor_output)
-        print(working_paths)
+            # set framework
+            cnn_feature_extractor.set_framework(models[model]['framework'])
+            visual_dataset.set_framework(models[model]['framework'])
+            # set model
+            cnn_feature_extractor.set_model(model)
+            visual_dataset.set_model(model)
+            # set reshape
+            visual_dataset.set_reshape(models[model]['reshape'])
+            for model_layer in models[model]['output_layers']:
+                cnn_feature_extractor.set_output_layer(model_layer)
+                for index in range(visual_dataset.__len__()):
+                    adjusted_item = visual_dataset.__getitem__(index)
+                    extractor_output = cnn_feature_extractor.extract_feature(adjusted_item)
+                    visual_dataset.create_output_file(index, extractor_output, model_layer)
 
     # the following code will be customized and then replaced
     if config.has_config('items', 'textual'):
