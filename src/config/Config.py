@@ -12,19 +12,23 @@ class Config:
 
     def __find_yaml_file_path(self, old_path):
         """
-
+        if old_path links to a directory the method search a 'yaml' file in the directory. Otherwise, if it poinst to a
+        file, all is fine. Else the method try to correct the path in a working one, if it fails raise an error
         Args:
-            old_path:
+            old_path: the path given from the user, here starts the search for the file
 
         Returns:
+            it returns nothing but set the __config_file_path that points directly to the yaml file
 
         """
         # the path can be:
-        # a path only to the directory
-        # a complete path to a yml/yaml, in this case must be verified that the extension is correct
+        # - a path only to the directory
+        # - a complete path to a yml/yaml, in this case must be verified that the extension is correct
         if os.path.isdir(old_path):
+            # search through the directory a file with the correct extension
             dir_list = os.listdir(old_path)
             for file in dir_list:
+                # the extensions can be both .yml or .yaml
                 if file[-4:] == '.yml' or file[-5:] == '.yaml':
                     self.__config_file_path = os.path.join(old_path, file)
                     return
@@ -33,6 +37,7 @@ class Config:
             self.__config_file_path = old_path
         else:
             # in this case an error has occurred, thanks to the 2 possible extension
+            # maybe the user wrote .yml but the correct extension is .yaml or the opposite
             if os.path.exists(old_path[-3:] + 'yaml'):
                 self.__config_file_path = old_path[-3:] + 'yaml'
             elif os.path.exists(old_path[-4:] + 'yml'):
@@ -42,6 +47,9 @@ class Config:
                 raise FileNotFoundError('the path given is wrong: ' + old_path)
 
     def __load_config_from_file(self):
+        """
+            it simply loads the data contained in the file and call the method __clean_dict on it
+        """
         # there is no need here to raise an exception if the file is not found
         # since the os raises it autonomously
         with open(self.__config_file_path, 'r') as file:
@@ -49,6 +57,18 @@ class Config:
         self.__data_dict = self.__clean_dict(data)
 
     def __clean_dict(self, data):
+        """
+        It crosses in every element of the dict in search of a list of dict to transfrom in a big dict:
+        if there is a dict, it crosses every value (recalling this method).
+        If there is a list, it crosses every item (recalling this method). then if the items are dicts the list
+        is swapped with a big dict
+        Args:
+            data: it's the data contained in the yaml file as a dict
+
+        Returns:
+            data: it returns data cleaned, every list of dict is transformed in a single dict
+
+        """
         # using yaml there is a problem:
         # it has no strict rules, so you can have [[{}]] [[]] {[]} {{}} ecc
         # this recursive method transform everything as {...{}...} or {...[]...}
@@ -69,6 +89,11 @@ class Config:
         return data
 
     def get_gpu(self):
+        """
+
+        Returns: the gpu list as a string
+
+        """
         # if there is not a gpu config then "-1" (use cpu only)
         # otherwise return the config
         if 'gpu list' in self.__data_dict:
@@ -88,6 +113,15 @@ class Config:
             return '-1'
 
     def has_config(self, origin_of_elaboration, type_of_extractions):
+        """
+        Search the config in the data dicts then check that this config have values in it
+        Args:
+            origin_of_elaboration: 'items' or 'interactions'
+            type_of_extractions: 'textual' or 'visual'
+
+        Returns: Bool True/False if contains the configuration
+
+        """
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
         if origin_of_elaboration in self.__data_dict:
@@ -101,6 +135,15 @@ class Config:
         return False
 
     def paths_for_extraction(self, origin_of_elaboration, type_of_extraction):
+        """
+
+        Args:
+            origin_of_elaboration: 'items' or 'interactions'
+            type_of_extraction: 'textual' or 'visual'
+
+        Returns: a dict as { 'input_path': input path, 'output_path': output_path }
+
+        """
         # {'input_path': ///, 'output_path': ///}
         relative_input_path = self.__data_dict[origin_of_elaboration]['input'][type_of_extraction]
         relative_output_path = self.__data_dict[origin_of_elaboration]['output'][type_of_extraction]
@@ -110,6 +153,16 @@ class Config:
             'output_path': os.path.join(self.__data_dict['dataset'], relative_output_path)}
 
     def get_models_list(self, origin_of_elaboration, type_of_extractions):
+        """
+
+        Args:
+            origin_of_elaboration: 'items' or 'interactions'
+            type_of_extractions: 'textual' or 'visual'
+
+        Returns: a dict of the models, every model is a dict with 'output_layers': the layers of extraction,
+        'reshape': height, width as pixel to reshape, 'framework': framework to work with tensorflow or torch
+
+        """
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
         models = self.__data_dict[origin_of_elaboration]['model'][type_of_extractions]
@@ -132,6 +185,7 @@ class Config:
                     raise ValueError('the framework tag in the yaml file is not written correctly')
             else:
                 # add the framework tag with a list with both the frameworks
+                # in this way both framework are equally good to work whit
                 models[model].update({'framework': ['tensorflow', 'torch']})
 
         return models

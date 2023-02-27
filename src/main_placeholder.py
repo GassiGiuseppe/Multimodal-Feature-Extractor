@@ -11,8 +11,6 @@ def foo():
     # set gpu to use
     os.environ['CUDA_VISIBLE_DEVICES'] = config.get_gpu()
 
-    # NOTE FOR FUTURE DEVELOP: if these ifs are all the same, create a unified fun
-
     if config.has_config('items', 'visual'):
         # get paths and models
         working_paths = config.paths_for_extraction('items', 'visual')
@@ -30,10 +28,15 @@ def foo():
             # set reshape
             visual_dataset.set_reshape(models[model]['reshape'])
             for model_layer in models[model]['output_layers']:
+                # set output layer
                 cnn_feature_extractor.set_output_layer(model_layer)
                 for index in range(visual_dataset.__len__()):
+                    # for evey image do the extraction
+                    # retrieve the image from dataset
                     adjusted_item = visual_dataset.__getitem__(index)
+                    # do the extraction
                     extractor_output = cnn_feature_extractor.extract_feature(adjusted_item)
+                    # create the npy file with the extraction output
                     visual_dataset.create_output_file(index, extractor_output, model_layer)
 
     # the following code will be customized and then replaced
@@ -49,26 +52,6 @@ def foo():
         working_paths = config.paths_for_extraction('interactions', 'visual')
         for model in config.get_models_list('interactions', 'visual'):
             print('here do')
-
-
-def execute_extraction(origin_of_elaboration, type_of_extractions, config):
-    # if there is the correct configuration
-    # es items/interactions
-    if config.has_config(origin_of_elaboration, type_of_extractions):
-        # input/output path
-        working_paths = config.paths_for_extraction(origin_of_elaboration, type_of_extractions)
-        models = config.get_models_list(origin_of_elaboration, type_of_extractions)
-        for model in models.keys():
-            print(model)
-            visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'], model_name=model)
-            model_layer = models[model]['output_layers']
-            cnn_feature_extractor = CnnFeatureExtractor(model, model_layer)
-            for index in range(visual_dataset.__len__()):
-                dataset_output = visual_dataset.__getitem__(index)
-                print(dataset_output)
-                extractor_output = cnn_feature_extractor.extract_feature(dataset_output)
-                print(extractor_output)
-        print(working_paths)
 
 
 if __name__ == '__main__':
