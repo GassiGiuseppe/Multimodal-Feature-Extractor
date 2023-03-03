@@ -30,7 +30,7 @@ class DatasetFather:
 
     def create_output_file(self, index, extracted_data, model_layer):
         input_file_name = self._filenames[index].split('.')[0]
-        output_file_name = input_file_name + '_' + self._model_name + '_' + model_layer + '.npy'
+        output_file_name = input_file_name + '_' + self._model_name + '_' + str(model_layer) + '.npy'
         path = os.path.join(self._output_directory_path, output_file_name)
         numpy.save(path, extracted_data)
 
