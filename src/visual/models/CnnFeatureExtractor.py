@@ -30,7 +30,7 @@ class CnnFeatureExtractor:
         if self.model_name in tensorflow_models_for_extraction and 'tensorflow' in self.framework_list:
             self.model = tensorflow_models_for_extraction[self.model_name]()
         elif self.model_name in torch_models_for_extraction and 'torch' in self.framework_list:
-            self.model = torch_models_for_extraction[self.model_name](pretrained=False)
+            self.model = torch_models_for_extraction[self.model_name](pretrained=True)
             self.model.to(self.device)
             self.model.eval()
         else:
@@ -50,7 +50,10 @@ class CnnFeatureExtractor:
 
         else:
             # torch models??? the layer is linked nowhere
-            feature_model = torch.nn.Sequential(*list(self.model.children())[0])
+            s1 = torch.nn.Sequential(*list(self.model.children())[:-1])
+            s2 = torch.nn.Flatten()
+            s3 = torch.nn.Sequential(*list(list(self.model.children())[-1][1:-self.output_layer]))
+            feature_model = torch.nn.Sequential(s1, s2, s3)
             feature_model.eval()
             output = np.squeeze(feature_model(
                 image[None, ...].to(self.device)

@@ -11,12 +11,11 @@ from src.utils.ModelsMap import tensorflow_models_for_normalization
 
 class VisualDataset(DatasetFather, ABC):
 
-    def __init__(self, input_directory_path, output_directory_path, model_name='VGG19', reshape=(224, 224),
-                 normalize=True):
+    def __init__(self, input_directory_path, output_directory_path, model_name='VGG19', reshape=(224, 224)):
         super().__init__(input_directory_path, output_directory_path, model_name)
         self.framework_list = None
         self.__reshape = reshape
-        self.__normalize = normalize
+
 
     def __getitem__(self, idx):
         image_path = os.path.join(self._input_directory_path, self._filenames[idx])
@@ -32,7 +31,7 @@ class VisualDataset(DatasetFather, ABC):
             return np.expand_dims(norm_sample, axis=0)
         else:
             # np for torch
-            return np.array(norm_sample)
+            return norm_sample
 
     def _pre_processing(self, sample):
         # resize
@@ -41,20 +40,16 @@ class VisualDataset(DatasetFather, ABC):
         else:
             res_sample = sample
 
-        # normalize
-        if self.__normalize:
-            if self._model_name in tensorflow_models_for_normalization and 'tensorflow' in self.framework_list:
-                command = tensorflow_models_for_normalization[self._model_name]
-                norm_sample = command.preprocess_input(np.array(res_sample))
-            else:
-                # if the model is a torch model, the normalization is the same for everyone
-                transform = transforms.Compose([transforms.ToTensor(),
-                                                transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                                     std=[0.229, 0.224, 0.225])
-                                                ])
-                norm_sample = transform(res_sample)
+        if self._model_name in tensorflow_models_for_normalization and 'tensorflow' in self.framework_list:
+            command = tensorflow_models_for_normalization[self._model_name]
+            norm_sample = command.preprocess_input(np.array(res_sample))
         else:
-            return res_sample
+            # if the model is a torch model, the normalization is the same for everyone
+            transform = transforms.Compose([transforms.ToTensor(),
+                                            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                 std=[0.229, 0.224, 0.225])
+                                            ])
+            norm_sample = transform(res_sample)
 
         return norm_sample
 

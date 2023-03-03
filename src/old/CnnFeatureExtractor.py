@@ -69,6 +69,7 @@ class CnnFeatureExtractor:
                 feature_model = torch.nn.Sequential(s1, s2, s3)
             else:
                 feature_model = torch.nn.Sequential(*list(self.model.children())[0])
+
             feature_model.eval()
             output = np.squeeze(feature_model(
                 image[None, ...].to(self.device)
