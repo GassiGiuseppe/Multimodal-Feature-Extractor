@@ -20,20 +20,3 @@ torch_models_for_extraction = {
     'VGG11': models.vgg11
 }
 
-
-class TensorflowModelsForExtraction(Enum):
-    ResNet50 = tf.keras.applications.ResNet50
-    VGG19 = tf.keras.applications.VGG19
-    ResNet152 = tf.keras.applications.ResNet152
-
-
-class TensorflowModelsForNormalization(Enum):
-    ResNet50 = tf.keras.applications.resnet
-    VGG19 = tf.keras.applications.vgg19
-    ResNet152 = tf.keras.applications.resnet
-
-
-class TorchModelsForExtraction(Enum):
-    AlexNet = models.alexnet
-    VGG11 = models.vgg11
-    VGG19 = models.vgg19

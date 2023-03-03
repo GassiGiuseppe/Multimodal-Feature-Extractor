@@ -6,7 +6,7 @@ import tensorflow as tf
 from torchvision import transforms
 import numpy as np
 import os
-from src.utils.ModelsMap import tensorflow_models_for_normalization
+from src.utils.model_map import tensorflow_models_for_normalization
 
 
 class VisualDataset(DatasetFather, ABC):

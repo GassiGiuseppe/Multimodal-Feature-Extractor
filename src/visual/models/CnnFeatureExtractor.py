@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 from torchvision.datasets import imagenet
-from src.utils.ModelsMap import tensorflow_models_for_extraction, torch_models_for_extraction
+from src.utils.model_map import tensorflow_models_for_extraction, torch_models_for_extraction
 
 
 # convolution neural network
