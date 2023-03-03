@@ -124,13 +124,15 @@ class Config:
         """
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
-        if origin_of_elaboration in self.__data_dict:
-            if type_of_extractions in self.__data_dict[origin_of_elaboration]['input'] and \
-                    type_of_extractions in self.__data_dict[origin_of_elaboration]['output']:
+        if origin_of_elaboration in self.__data_dict and type_of_extractions in self.__data_dict[origin_of_elaboration]:
+            local_dict = self.__data_dict[origin_of_elaboration][type_of_extractions]
+            # check if local dict has input/output/model
+            if 'input' in local_dict and 'output' in local_dict and 'model' in local_dict:
                 # in this case it's all right but must be checked that the values are not empty
-                input_value = self.__data_dict[origin_of_elaboration]['input'][type_of_extractions]
-                output_value = self.__data_dict[origin_of_elaboration]['output'][type_of_extractions]
-                if input_value is not None and output_value is not None:
+                input_value = local_dict['input']
+                output_value = local_dict['output']
+                model_value = local_dict['model']
+                if input_value is not None and output_value is not None and model_value is not None:
                     return True
         return False
 
@@ -145,8 +147,8 @@ class Config:
 
         """
         # {'input_path': ///, 'output_path': ///}
-        relative_input_path = self.__data_dict[origin_of_elaboration]['input'][type_of_extraction]
-        relative_output_path = self.__data_dict[origin_of_elaboration]['output'][type_of_extraction]
+        relative_input_path = self.__data_dict[origin_of_elaboration][type_of_extraction]['input']
+        relative_output_path = self.__data_dict[origin_of_elaboration][type_of_extraction]['output']
 
         return {
             'input_path': os.path.join(self.__data_dict['dataset'], relative_input_path),
@@ -165,7 +167,7 @@ class Config:
         """
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
-        models = self.__data_dict[origin_of_elaboration]['model'][type_of_extractions]
+        models = self.__data_dict[origin_of_elaboration][type_of_extractions]['model']
 
         for model in models:
             # clean output_layers [it has to be always a list]
