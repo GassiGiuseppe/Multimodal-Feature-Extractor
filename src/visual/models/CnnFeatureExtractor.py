@@ -47,6 +47,8 @@ class CnnFeatureExtractor:
             input_model = self.model.input
             output_layer = self.model.get_layer(self.output_layer).output
             output = tf.keras.Model(input_model, output_layer)(image, training=False)
+            # update the framework list
+            self.framework_list = ['tensorflow']
 
         else:
             # torch models??? the layer is linked nowhere
@@ -58,4 +60,7 @@ class CnnFeatureExtractor:
             output = np.squeeze(feature_model(
                 image[None, ...].to(self.device)
             ).data.cpu().numpy())
+            # update the framework list
+            self.framework_list = ['torch']
+
         return output
