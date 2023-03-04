@@ -13,9 +13,7 @@ class VisualDataset(DatasetFather, ABC):
 
     def __init__(self, input_directory_path, output_directory_path, model_name='VGG19', reshape=(224, 224)):
         super().__init__(input_directory_path, output_directory_path, model_name)
-        self.framework_list = None
         self.__reshape = reshape
-
 
     def __getitem__(self, idx):
         image_path = os.path.join(self._input_directory_path, self._filenames[idx])
@@ -26,11 +24,11 @@ class VisualDataset(DatasetFather, ABC):
 
         norm_sample = self._pre_processing(sample)
 
-        if self._model_name in tensorflow_models_for_normalization and 'tensorflow' in self.framework_list:
+        if 'tensorflow' in self.framework_list:
             # np for tensorflow
             return np.expand_dims(norm_sample, axis=0)
         else:
-            # np for torch
+            # torch
             return norm_sample
 
     def _pre_processing(self, sample):
@@ -43,6 +41,8 @@ class VisualDataset(DatasetFather, ABC):
         if self._model_name in tensorflow_models_for_normalization and 'tensorflow' in self.framework_list:
             command = tensorflow_models_for_normalization[self._model_name]
             norm_sample = command.preprocess_input(np.array(res_sample))
+            # update the framework list
+            self.framework_list = ['tensorflow']
         else:
             # if the model is a torch model, the normalization is the same for everyone
             transform = transforms.Compose([transforms.ToTensor(),
@@ -50,11 +50,15 @@ class VisualDataset(DatasetFather, ABC):
                                                                  std=[0.229, 0.224, 0.225])
                                             ])
             norm_sample = transform(res_sample)
+            # update the framework list
+            self.framework_list = ['torch']
 
         return norm_sample
 
     def set_reshape(self, reshape):
         self.__reshape = reshape
 
-    def set_framework(self, framework_list):
-        self.framework_list = framework_list
+    def get_framework(self):
+        # since in the _pre_processing method the framework is updated
+        return self.framework_list
+

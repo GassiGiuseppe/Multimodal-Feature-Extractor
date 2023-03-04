@@ -6,6 +6,7 @@ import numpy
 
 class DatasetFather:
     def __init__(self, input_directory_path, output_directory_path, model_name):
+        self.framework_list = None
         self._model_name = model_name
 
         self._input_directory_path = input_directory_path
@@ -29,9 +30,22 @@ class DatasetFather:
         self._model_name = model
 
     def create_output_file(self, index, extracted_data, model_layer):
+        # WARNING THE FRAMEWORK LIST NEEDS TO BE UPDATED IN ORDER TO MAKE THIS METHOD WORK PROPERLY
+        # IN VISUAL IT IS DONE
+        # IN TEXTUAL: NOT
+
+        # generate file name
         input_file_name = self._filenames[index].split('.')[0]
         output_file_name = input_file_name + '_' + self._model_name + '_' + str(model_layer) + '.npy'
-        path = os.path.join(self._output_directory_path, output_file_name)
+
+        # generate output path
+        framework = self.framework_list[0]
+        output_path = os.path.join(self._output_directory_path, framework)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+
+        # create file
+        path = os.path.join(output_path, output_file_name)
         numpy.save(path, extracted_data)
 
     @abstractmethod
@@ -41,3 +55,6 @@ class DatasetFather:
     @abstractmethod
     def _pre_processing(self, sample):
         pass
+    
+    def set_framework(self, framework_list):
+        self.framework_list = framework_list
