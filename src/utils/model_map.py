@@ -1,4 +1,3 @@
-from enum import Enum
 import tensorflow as tf
 import torchvision.models as models
 
