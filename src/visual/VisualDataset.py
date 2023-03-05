@@ -58,7 +58,7 @@ class VisualDataset(DatasetFather, ABC):
     def set_reshape(self, reshape):
         self.__reshape = reshape
 
-    def get_framework(self):
-        # since in the _pre_processing method the framework is updated
-        return self.framework_list
+    def get_image_name(self, index):
+        return self._filenames[index]
+
 

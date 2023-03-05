@@ -7,26 +7,27 @@
 # which framework you intend to use 'tensorflow'/'torch'
 
 
-- dataset: 'main folder path'
+- dataset: 'D:\dati\uni\tesi\datasetFolder'
 - gpu list: -1
 - items:
     - visual:
-        - input: 'inputVisual path'
-        - output: 'outputVisual path'
-        - model: {
-            'ResNet50': { output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: 'tensorflow' },
-            'AlexNet': { output_layers: 5, reshape: [ 224,224 ] }
-        }
+        - input: 'inputVisualDummies'
+        - output: 'outputVisualDummies'
+        - model: [
+             { name: 'ResNet50' , output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: ['tensorflow'] },
+             # { name: 'ResNet50' , output_layers: 32 , reshape: [ 224,224 ], framework: ['torch'] },
+             { name: 'AlexNet',  output_layers: 5, reshape: [ 224,224 ]}
+            ]
     - textual:
         - input:
         - output:
-        - model: {}
+        - model: []
 - interactions:
     - visual:
         - input:
         - output:
-        - model: {}
+        - model: []
     - textual:
         - input:
         - output:
-        - model: {}
+        - model: []

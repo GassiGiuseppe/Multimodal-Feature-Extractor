@@ -16,6 +16,7 @@ tensorflow_models_for_normalization = {
 torch_models_for_extraction = {
     'AlexNet': models.alexnet,
     'VGG19': models.vgg19,
-    'VGG11': models.vgg11
+    'VGG11': models.vgg11,
+    'ResNet50': models.resnet50
 }
 
