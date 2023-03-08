@@ -13,7 +13,7 @@ dataset = args.dataset
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 train_reviews = pd.read_csv(f'../data/{dataset}/train_reviews.txt', sep='\t', header=None)
 train_reviews.columns = ['user', 'item', 'review']
-sentiment_pipeline = pipeline(task="sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+sentiment_pipeline = pipeline(model="nlptown/bert-base-multilingual-uncased-sentiment")
 users_items_nan = train_reviews[train_reviews['review'].isna()][['user', 'item']]
 model = list(sentiment_pipeline.model.children())[-3]
 model.eval()
