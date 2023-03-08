@@ -6,7 +6,7 @@ class Config:
 
     def __init__(self, config_file_path=r'../config/config.yml'):
         # both absolute and relative path are fine
-        self.__data_dict = None
+        self._data_dict = None
         self.__find_yaml_file_path(config_file_path)
         self.__load_config_from_file()
 
@@ -54,7 +54,7 @@ class Config:
         # since the os raises it autonomously
         with open(self.__config_file_path, 'r') as file:
             data = yaml.safe_load(file)
-        self.__data_dict = self.__clean_dict(data)
+        self._data_dict = self.__clean_dict(data)
 
     def __clean_dict(self, data):
         """
@@ -98,8 +98,8 @@ class Config:
         """
         # if there is not a gpu config then "-1" (use cpu only)
         # otherwise return the config
-        if 'gpu list' in self.__data_dict:
-            gpu_list = self.__data_dict['gpu list']
+        if 'gpu list' in self._data_dict:
+            gpu_list = self._data_dict['gpu list']
             if isinstance(gpu_list, str):
                 # es '1' or '1,2'
                 return gpu_list
@@ -126,8 +126,8 @@ class Config:
         """
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
-        if origin_of_elaboration in self.__data_dict and type_of_extractions in self.__data_dict[origin_of_elaboration]:
-            local_dict = self.__data_dict[origin_of_elaboration][type_of_extractions]
+        if origin_of_elaboration in self._data_dict and type_of_extractions in self._data_dict[origin_of_elaboration]:
+            local_dict = self._data_dict[origin_of_elaboration][type_of_extractions]
             # check if local dict has input/output/model
             if 'input' in local_dict and 'output' in local_dict and 'model' in local_dict:
                 # in this case it's all right but must be checked that the values are not empty
@@ -149,12 +149,12 @@ class Config:
 
         """
         # {'input_path': ///, 'output_path': ///}
-        relative_input_path = self.__data_dict[origin_of_elaboration][type_of_extraction]['input']
-        relative_output_path = self.__data_dict[origin_of_elaboration][type_of_extraction]['output']
+        relative_input_path = self._data_dict[origin_of_elaboration][type_of_extraction]['input']
+        relative_output_path = self._data_dict[origin_of_elaboration][type_of_extraction]['output']
 
         return {
-            'input_path': os.path.join(self.__data_dict['dataset'], relative_input_path),
-            'output_path': os.path.join(self.__data_dict['dataset'], relative_output_path)}
+            'input_path': os.path.join(self._data_dict['dataset'], relative_input_path),
+            'output_path': os.path.join(self._data_dict['dataset'], relative_output_path)}
 
     def get_models_list(self, origin_of_elaboration, type_of_extractions):
         """
@@ -168,7 +168,7 @@ class Config:
 
         """
 
-        models = self.__data_dict[origin_of_elaboration][type_of_extractions]['model']
+        models = self._data_dict[origin_of_elaboration][type_of_extractions]['model']
 
         for model in models:
 
@@ -188,11 +188,25 @@ class Config:
 
                     first_model = model
                     first_model.update({'framework': ['tensorflow']})
-                    # models_list.append(first_model)
 
                     second_model = model
                     second_model.update({'framework': ['torch']})
+
+                    # layers
+
+                    first_model_layers = []
+                    second_model_layers = []
+                    for layer in model['output_layers']:
+                        if isinstance(layer, int):
+                            second_model_layers.append(layer)
+                        else:
+                            first_model_layers.append(layer)
+
+                    first_model.update({'output_layers': first_model_layers})
+                    second_model.update({'output_layers': second_model_layers})
+
                     # models_list.append(second_model)
+                    # models_list.append(first_model)
 
                     # this setting does not work properly because the two framework uses calls different layers
                     raise ValueError(' unfortunately calling both framework simultaneity doesnt work')
@@ -222,7 +236,7 @@ class Config:
         """
 
         # new plan: now each model is a element of a list
-        models = self.__data_dict[origin_of_elaboration][type_of_extractions]['model']
+        models = self._data_dict[origin_of_elaboration][type_of_extractions]['model']
 
         # transform model from dict of dicts to list of dicts
         models_list = []
@@ -275,4 +289,4 @@ class Config:
         return models_list
 
     def get_dict(self):
-        return self.__data_dict
+        return self._data_dict
