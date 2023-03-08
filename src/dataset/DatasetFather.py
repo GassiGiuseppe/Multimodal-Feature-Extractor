@@ -6,7 +6,7 @@ import numpy
 
 class DatasetFather:
     def __init__(self, input_directory_path, output_directory_path, model_name):
-        self.framework_list = None
+        self._framework_list = None
         self._model_name = model_name
         self._input_directory_path = input_directory_path
         self._output_directory_path = output_directory_path
@@ -22,10 +22,10 @@ class DatasetFather:
         self._filenames = os.listdir(self._input_directory_path)
         self._filenames = human_sort(self._filenames)
 
-        self.__num_samples = len(self._filenames)
+        self._num_samples = len(self._filenames)
 
     def __len__(self):
-        return self.__num_samples
+        return self._num_samples
 
     def set_model(self, model):
         self._model_name = model
@@ -37,12 +37,13 @@ class DatasetFather:
 
         # generate file name
         input_file_name = self._filenames[index].split('.')[0]
-        output_file_name = input_file_name + '_' + str(model_layer) + '.npy'
+        output_file_name = input_file_name  + '.npy'
 
         # generate output path
-        framework = self.framework_list[0]
+        framework = self._framework_list[0]
         output_path = os.path.join(self._output_directory_path, framework)
         output_path = os.path.join(output_path, self._model_name)
+        output_path = os.path.join(output_path, str(model_layer))
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
@@ -59,4 +60,4 @@ class DatasetFather:
         pass
     
     def set_framework(self, framework_list):
-        self.framework_list = framework_list
+        self._framework_list = framework_list
