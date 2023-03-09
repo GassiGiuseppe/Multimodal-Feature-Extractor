@@ -37,7 +37,7 @@ class DatasetFather:
 
         # generate file name
         input_file_name = self._filenames[index].split('.')[0]
-        output_file_name = input_file_name  + '.npy'
+        output_file_name = input_file_name + '.npy'
 
         # generate output path
         framework = self._framework_list[0]
