@@ -36,7 +36,7 @@ def parse_args():
 args = parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 
-from src.visual.models.CnnFeatureExtractor import *
+from src.visual.models.VisualCnnFeatureExtractor import *
 from src.old.Dataset import *
 from config.configs import *
 from utils.write import *
@@ -74,12 +74,12 @@ def classify_extract():
                                                         args.category_dim))
 
         # model setting
-        cnn_model = CnnFeatureExtractor(args.gpu,
-                                        read_imagenet_classes_txt(imagenet_classes_path),
-                                        m,
-                                        args.cnn_output_name[id_model],
-                                        args.category_dim,
-                                        args.cnn_output_shape[id_model])
+        cnn_model = VisualCnnFeatureExtractor(args.gpu,
+                                              read_imagenet_classes_txt(imagenet_classes_path),
+                                              m,
+                                              args.cnn_output_name[id_model],
+                                              args.category_dim,
+                                              args.cnn_output_shape[id_model])
 
         # dataset setting
         data = Dataset(
