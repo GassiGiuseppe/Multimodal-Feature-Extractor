@@ -14,14 +14,17 @@
         - input: 'inputVisualDummies'
         - output: 'outputVisualDummies'
         - model: [
-             { name: 'ResNet50' , output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: ['tensorflow'] },
-             # { name: 'ResNet50' , output_layers: 32 , reshape: [ 224,224 ], framework: ['torch'] },
-             { name: 'AlexNet',  output_layers: 5, reshape: [ 224,224 ]}
+             #{ name: 'ResNet50' , output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: ['tensorflow'] },
+             #{ name: 'AlexNet',  output_layers: 5, reshape: [ 224,224 ]},
+             #{ name: 'ResNet50' , output_layers: 3 , reshape: [ 224,224 ], framework: ['torch'] }
+
             ]
     - textual:
-        - input:
-        - output:
-        - model: []
+        - input: 'inputTextualDummies'
+        - output: 'outputTextualDummies'
+        - model: [
+                { name: 'nlptown/bert-base-multilingual-uncased-sentiment',  output_layers: 5, text_to_be_cleaned: True}
+                ]
 - interactions:
     - visual:
         - input:
