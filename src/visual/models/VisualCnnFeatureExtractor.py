@@ -11,7 +11,7 @@ from src.utils.model_map import tensorflow_models_for_extraction, torch_models_f
 
 # convolution neural network
 # the file is heavily cut, the complete file is in the 'old' directory
-class CnnFeatureExtractor:
+class VisualCnnFeatureExtractor:
     def __init__(self, gpu='-1'):
         self._framework_list = None
         self.model = None
@@ -51,12 +51,14 @@ class CnnFeatureExtractor:
             self._framework_list = ['tensorflow']
 
         else:
-            # torch models??? the layer is linked nowhere
+
             s1 = torch.nn.Sequential(*list(self.model.children())[:-1])
             s2 = torch.nn.Flatten()
             if isinstance(list(self.model.children())[-1], torch.nn.Linear):
-                s3 = list(self.model.children())[-self._output_layer]
+                # HERE HERE HERE there is a issue
+                s3 = list(self.model.children())[-1]
             else:
+                # -1 instead of
                 s3 = torch.nn.Sequential(*list(list(self.model.children())[-1][1:-self._output_layer]))
             feature_model = torch.nn.Sequential(s1, s2, s3)
             feature_model.eval()
