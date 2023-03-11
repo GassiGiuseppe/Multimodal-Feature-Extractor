@@ -22,7 +22,6 @@ class TextualDataset(DatasetFather):
         super().__init__(input_directory_path, output_directory_path, model_name=None)
         self._text_to_be_cleaned = True
 
-
     def __getitem__(self, index):
         image_path = os.path.join(self._input_directory_path, self._filenames[index])
         with open(image_path, 'r') as f:
@@ -83,17 +82,6 @@ class TextualDataset(DatasetFather):
             sample = re.sub(r"\s{2,}", " ", sample)
             sample.strip().lower()
 
-        # now using the Tokenizer theory a list of string is needed, a string for each sentence
-        # split for [. , ! \n]
-        sample_list = []
-        #sample = sample.split('\n')
-        #sample = complex_spit_of_list_of_string(sample, '.')
-        #sample = complex_spit_of_list_of_string(sample, '!')
-        #sample = complex_spit_of_list_of_string(sample, '?')
-        for element in sample:
-            if element is None:
-                print('problema')
+
 
         return sample
-
-

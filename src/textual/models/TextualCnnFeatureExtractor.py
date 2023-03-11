@@ -42,7 +42,7 @@ class TextualCnnFeatureExtractor:
         else:
             raise NotImplemented('This feature extractor has not been added yet!')
         '''
-        sentiment_pipeline = pipeline(model="nlptown/bert-base-multilingual-uncased-sentiment")
+        sentiment_pipeline = pipeline(model=model_name)
 
         # this is as the professor has written
         model = list(sentiment_pipeline.model.children())[-3] # HERE LAYER???
@@ -62,5 +62,5 @@ class TextualCnnFeatureExtractor:
         self._framework_list = framework_list
 
     def extract_feature(self, sample_input):
-        output = self.tokenizer.encode_plus(sample_input, truncation=True, padding=True, return_tensors="pt").to(self._device)
+        output = self.tokenizer.encode_plus(sample_input, return_tensors="pt").to(self._device)
         return self.model(**output.to(self._device)).pooler_output.detach().cpu().numpy()
