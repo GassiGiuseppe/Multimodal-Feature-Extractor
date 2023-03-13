@@ -1,12 +1,11 @@
 from abc import ABC
 
 from PIL import Image
-from src.dataset.DatasetFather import DatasetFather
-import tensorflow as tf
+from src.internal.father_classes.DatasetFather import DatasetFather
 from torchvision import transforms
 import numpy as np
 import os
-from src.utils.model_map import tensorflow_models_for_normalization
+from src.internal.utils.model_map import tensorflow_models_for_normalization
 
 
 class VisualDataset(DatasetFather, ABC):
@@ -38,7 +37,9 @@ class VisualDataset(DatasetFather, ABC):
         else:
             res_sample = sample
 
+        # normalize
         if self._model_name in tensorflow_models_for_normalization and 'tensorflow' in self._framework_list:
+            # if the model is a tensorflow model, each one execute a different command (retrieved from the model map)
             command = tensorflow_models_for_normalization[self._model_name]
             norm_sample = command.preprocess_input(np.array(res_sample))
             # update the framework list
@@ -57,8 +58,4 @@ class VisualDataset(DatasetFather, ABC):
 
     def set_reshape(self, reshape):
         self._reshape = reshape
-
-    def get_image_name(self, index):
-        return self._filenames[index]
-
 

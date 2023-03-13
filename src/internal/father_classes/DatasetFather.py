@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from src.utils.human_sorting import human_sort
+from src.internal.utils.human_sorting import human_sort
 import os
 import numpy
 

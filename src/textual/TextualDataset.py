@@ -1,9 +1,10 @@
 import os
 import re
 
-from src.dataset.DatasetFather import DatasetFather
+from src.internal.father_classes.DatasetFather import DatasetFather
 
 
+# the following function is not called right now. but it will be needed in the future
 def complex_spit_of_list_of_string(sample, splitter):
     sample_list = []
     for el in sample:
@@ -27,9 +28,6 @@ class TextualDataset(DatasetFather):
         with open(image_path, 'r') as f:
             sample = f.read()
         return self._pre_processing(sample)
-
-    def set_clean_text_flag(self, text_to_be_cleaned):
-        self._text_to_be_cleaned = text_to_be_cleaned
 
     def _pre_processing(self, sample):
         if self._text_to_be_cleaned:
@@ -82,6 +80,7 @@ class TextualDataset(DatasetFather):
             sample = re.sub(r"\s{2,}", " ", sample)
             sample.strip().lower()
 
-
-
         return sample
+
+    def set_reshape(self, text_to_be_cleaned):
+        self._text_to_be_cleaned = text_to_be_cleaned

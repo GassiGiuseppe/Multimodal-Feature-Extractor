@@ -1,3 +1,5 @@
+# NOTE: this file right now does not work. it will be fixed in the future
+
 import numpy as np
 import cv2
 

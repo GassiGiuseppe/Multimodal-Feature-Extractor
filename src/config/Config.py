@@ -4,7 +4,7 @@ import os
 
 class Config:
 
-    def __init__(self, config_file_path=r'../config/config.yml'):
+    def __init__(self, config_file_path):
         # both absolute and relative path are fine
         self._data_dict = None
         self.__find_yaml_file_path(config_file_path)
@@ -114,20 +114,21 @@ class Config:
         else:
             return '-1'
 
-    def has_config(self, origin_of_elaboration, type_of_extractions):
+    def has_config(self, origin_of_elaboration, type_of_extraction):
         """
         Search the config in the data dicts then check that this config have values in it
         Args:
             origin_of_elaboration: 'items' or 'interactions'
-            type_of_extractions: 'textual' or 'visual'
+            type_of_extraction: 'textual' or 'visual'
 
         Returns: Bool True/False if contains the configuration
 
         """
         # example of origin_of_elaboration: 'items', 'interactions'
         # example of type_of_extractions: 'textual', 'visual'
-        if origin_of_elaboration in self._data_dict and type_of_extractions in self._data_dict[origin_of_elaboration]:
-            local_dict = self._data_dict[origin_of_elaboration][type_of_extractions]
+        # if origin_of_elaboration in self._data_dict and type_of_extraction in self._data_dict[origin_of_elaboration]:
+        if type_of_extraction in self._data_dict and origin_of_elaboration in self._data_dict[type_of_extraction]:
+            local_dict = self._data_dict[type_of_extraction][origin_of_elaboration]
             # check if local dict has input/output/model
             if 'input' in local_dict and 'output' in local_dict and 'model' in local_dict:
                 # in this case it's all right but must be checked that the values are not empty
@@ -149,26 +150,26 @@ class Config:
 
         """
         # {'input_path': ///, 'output_path': ///}
-        relative_input_path = self._data_dict[origin_of_elaboration][type_of_extraction]['input']
-        relative_output_path = self._data_dict[origin_of_elaboration][type_of_extraction]['output']
+        relative_input_path = self._data_dict[type_of_extraction][origin_of_elaboration]['input']
+        relative_output_path = self._data_dict[type_of_extraction][origin_of_elaboration]['output']
 
         return {
             'input_path': os.path.join(self._data_dict['dataset'], relative_input_path),
             'output_path': os.path.join(self._data_dict['dataset'], relative_output_path)}
 
-    def get_models_list(self, origin_of_elaboration, type_of_extractions):
+    def get_models_list(self, origin_of_elaboration, type_of_extraction):
         """
 
         Args:
             origin_of_elaboration: 'items' or 'interactions'
-            type_of_extractions: 'textual' or 'visual'
+            type_of_extraction: 'textual' or 'visual'
 
         Returns: a dict of the models, every model is a dict with 'output_layers': the layers of extraction,
         'reshape': height, width as pixel to reshape, 'framework': framework to work with tensorflow or torch
 
         """
 
-        models = self._data_dict[origin_of_elaboration][type_of_extractions]['model']
+        models = self._data_dict[type_of_extraction][origin_of_elaboration]['model']
 
         for model in models:
 
@@ -223,70 +224,3 @@ class Config:
 
         return models
 
-    def get_models_list_from_dict(self, origin_of_elaboration, type_of_extractions):
-        """
-
-        Args:
-            origin_of_elaboration: 'items' or 'interactions'
-            type_of_extractions: 'textual' or 'visual'
-
-        Returns: a dict of the models, every model is a dict with 'output_layers': the layers of extraction,
-        'reshape': height, width as pixel to reshape, 'framework': framework to work with tensorflow or torch
-
-        """
-
-        # new plan: now each model is a element of a list
-        models = self._data_dict[origin_of_elaboration][type_of_extractions]['model']
-
-        # transform model from dict of dicts to list of dicts
-        models_list = []
-        for model_name, model_dict in models.items():
-            # it is now created a temp single model dict that in the end will be appended to the list
-
-            # add to the single dict the tag model name
-            model_dict.update({'name': model_name})
-
-            # output_layers has to be a list
-            if not isinstance(model_dict['output_layers'], list):
-                # then it may be a str or an int, transform in a list and go on
-                model_dict.update({'output_layers': [model_dict['output_layers']]})
-
-            # Framework elaboration
-            # - if INPUT FRAMEWORK is ['tensorflow', 'torch'] then two different model dicts will be added to the list,
-            #   each one identical to the other except for the fact that it contains only one of the 2 type of framework
-            # - if OUTPUT FRAMEWORK is ['tensorflow', 'torch'] then outside of this method it means that
-            #   the framework in which operate is not known but only one of them will be executed
-            if 'framework' in model_dict.keys():
-                framework_value = model_dict['framework']
-
-                if framework_value == ['tensorflow', 'torch']:
-
-                    first_model = model_dict
-                    first_model.update({'framework': ['tensorflow']})
-                    # models_list.append(first_model)
-
-                    second_model = model_dict
-                    second_model.update({'framework': ['torch']})
-                    # models_list.append(second_model)
-
-                    # this setting does not work properly because the two framework uses calls different layers
-                    raise ValueError(' unfortunately calling both framework simultaneity doesnt work')
-
-                elif framework_value == ['tensorflow'] or framework_value == ['torch']:
-                    models_list.append(model_dict)
-
-                # framework value must be a list
-                elif framework_value == 'tensorflow' or framework_value == 'torch':
-                    model_dict.update({'framework': [framework_value]})
-                    models_list.append(model_dict)
-                else:
-                    raise ValueError('the framework tag in the yaml file is not written correctly')
-            else:
-                # the framework is not set, it is not know in which one operate, so both are set as plausible
-                model_dict.update({'framework': ['tensorflow', 'torch']})
-                models_list.append(model_dict)
-
-        return models_list
-
-    def get_dict(self):
-        return self._data_dict
