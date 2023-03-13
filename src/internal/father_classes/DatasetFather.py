@@ -31,9 +31,17 @@ class DatasetFather:
         self._model_name = model
 
     def create_output_file(self, index, extracted_data, model_layer):
-        # WARNING THE FRAMEWORK LIST NEEDS TO BE UPDATED IN ORDER TO MAKE THIS METHOD WORK PROPERLY
-        # IN VISUAL IT IS DONE
-        # IN TEXTUAL: NOT
+        """
+
+        Args:
+            index: (int) is the index to the filenames list
+            extracted_data: blob of data to put in the npy
+            model_layer: the name of the layer
+
+        Returns: it returns nothing to the program, but it creates a file as follows
+                 datasetFolder/framework/modelName/modelLayer/fileName.npy
+
+        """
 
         # generate file name
         input_file_name = self._filenames[index].split('.')[0]

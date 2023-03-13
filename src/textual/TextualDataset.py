@@ -9,9 +9,9 @@ def complex_spit_of_list_of_string(sample, splitter):
     sample_list = []
     for el in sample:
         temp = el.split(splitter)
-        for sentance in temp[:-1]:
-            sentance = sentance + splitter
-            sample_list.append(sentance)
+        for sentence in temp[:-1]:
+            sentence = sentence + splitter
+            sample_list.append(sentence)
         # now append the last that was excluded in the for each
         sample_list.append(temp[-1])
     return sample_list
@@ -24,6 +24,11 @@ class TextualDataset(DatasetFather):
         self._text_to_be_cleaned = True
 
     def __getitem__(self, index):
+        """
+        Args:
+            index: is the index in the filenames list from which extract the name of te file to elaborate
+        Returns: a String which contains the data of the file. It may be processed and cleaned
+        """
         image_path = os.path.join(self._input_directory_path, self._filenames[index])
         with open(image_path, 'r') as f:
             sample = f.read()
@@ -83,4 +88,10 @@ class TextualDataset(DatasetFather):
         return sample
 
     def set_reshape(self, text_to_be_cleaned):
+        """
+        Args:
+            text_to_be_cleaned: flag True/False if the text will be preprocessed and cleaned
+
+        Returns: nothing
+        """
         self._text_to_be_cleaned = text_to_be_cleaned

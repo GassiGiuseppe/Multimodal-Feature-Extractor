@@ -165,7 +165,7 @@ class Config:
             type_of_extraction: 'textual' or 'visual'
 
         Returns: a dict of the models, every model is a dict with 'output_layers': the layers of extraction,
-        'reshape': height, width as pixel to reshape, 'framework': framework to work with tensorflow or torch
+        'reshape': how to change the item, 'framework': framework to work with tensorflow or torch
 
         """
 
@@ -219,8 +219,15 @@ class Config:
 
                     raise ValueError('the framework tag in the yaml file is not written correctly')
             else:
-                # the framework is not set, it is not know in which one operate, so both are set as plausible
-                model.update({'framework': ['tensorflow', 'torch']})
+                # the framework is not set
+                if type_of_extraction == 'textual':
+                    # textual case
+                    # in this case we use the 'transformers' framework
+                    model.update({'framework': ['transformers']})
+                else:
+                    # it is in the visual case, it uses tensorflow or torch, but doesn't know which one
+                    # so both are set as plausible
+                    model.update({'framework': ['tensorflow', 'torch']})
 
         return models
 
