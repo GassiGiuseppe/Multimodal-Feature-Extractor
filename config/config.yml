@@ -5,36 +5,36 @@
 # GPU LIST is the list of gpu you intend to use, write -1 if you intend to use cpu
 # INPUT/OUTPUT are the names of the folder (that have to be in the dataset folder) used for extraction.
 #              note: the output folder may miss and in that case will be created
-# MODEL TEMPLATE: { name:'name' , output_layers: [layers list], reshape: [x ,y] <- for visual reshape| True/False <- for textual preprocessing,
+# MODEL TEMPLATE: { name:'name' , output_layers: [layers list],
 #                 in addition you CAN add the 'framework' tag to describe which framework you intend to use 'tensorflow'/'torch'}
+# if it is visual extraction then there is another flag in model: reshape(x,y)
+# otherwise if is a textual extraction: clear_text True/False
 
-
-- dataset: 'D:\dati\uni\tesi\datasetFolder'
+- dataset: 'C:\Users\User\OneDrive\Desktop\UNI\TESI\DatasetPerTest\archivio'
 - gpu list: -1
 
 - visual:
-    # REMIND reshape: [x,y] is the resize you want to make on the sample
+
     - items:
-        - input: 'inputVisualDummies'
-        - output: 'outputVisualDummies'
+        - input: 'images'
+        - output: 'outputVisual'
         - model: [
-             { name: 'ResNet50' , output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: ['tensorflow'] },
-             { name: 'AlexNet',  output_layers: 5, reshape: [ 224,224 ]},
+             #{ name: 'ResNet50' , output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: ['tensorflow'] },
+             #{ name: 'AlexNet',  output_layers: 5, reshape: [ 224,224 ]},
              { name: 'ResNet50' , output_layers: 3 , reshape: [ 224,224 ], framework: ['torch'] }
             ]
     - interactions:
         - input:
         - output:
-        - model: [ ]
+        - model: []
 
 - textual:
-    # REMIND reshape: True/False is the flag to clean the string
-    #        there is no need to add framework in the textual extraction since is used only transformers
+
     - items:
-        - input: 'inputTextualDummies'
-        - output: 'outputTextualDummies'
+        - input: 'description'
+        - output: 'outputTextual'
         - model: [
-              { name: 'nlptown/bert-base-multilingual-uncased-sentiment',  output_layers: 5, reshape: True }
+              { name: 'nlptown/bert-base-multilingual-uncased-sentiment',  output_layers: 5, clear_text: True }
           ]
     - interactions:
         - input:

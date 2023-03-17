@@ -37,15 +37,15 @@ class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
 
         else:
 
-            s1 = torch.nn.Sequential(*list(self._model.children())[:-1])
-            s2 = torch.nn.Flatten()
             if isinstance(list(self._model.children())[-1], torch.nn.Linear):
-
-                s3 = list(self._model.children())[-1]
+                s1 = torch.nn.Sequential(*list(self._model.children())[:-self._output_layer])
+                s2 = torch.nn.Flatten()
+                feature_model = torch.nn.Sequential(s1, s2)
             else:
-
+                s1 = torch.nn.Sequential(*list(self._model.children())[:-1])
+                s2 = torch.nn.Flatten()
                 s3 = torch.nn.Sequential(*list(list(self._model.children())[-1][1:-self._output_layer]))
-            feature_model = torch.nn.Sequential(s1, s2, s3)
+                feature_model = torch.nn.Sequential(s1, s2, s3)
             feature_model.eval()
             output = np.squeeze(feature_model(
                 image[None, ...].to(self._device)

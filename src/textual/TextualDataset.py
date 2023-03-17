@@ -87,7 +87,7 @@ class TextualDataset(DatasetFather):
 
         return sample
 
-    def set_reshape(self, text_to_be_cleaned):
+    def set_clean_flag(self, text_to_be_cleaned):
         """
         Args:
             text_to_be_cleaned: flag True/False if the text will be preprocessed and cleaned
