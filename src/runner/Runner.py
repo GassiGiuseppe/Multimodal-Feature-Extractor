@@ -33,7 +33,7 @@ def _execute_extraction_from_models_list(models, extractor, dataset, modality_ty
             extractor.set_output_layer(model_layer)
 
             with tqdm(total=dataset.__len__()) as t:
-                # for evey image do the extraction
+                # for evey item do the extraction
                 for index in range(dataset.__len__()):
                     # retrieve the item (preprocessed) from dataset
                     preprocessed_item = dataset.__getitem__(index)
@@ -53,7 +53,7 @@ class MultimodalFeatureExtractor:
         # set gpu to use
         os.environ['CUDA_VISIBLE_DEVICES'] = self._config.get_gpu()
 
-    def execute_extraction(self):
+    def execute_extractions(self):
         self.do_item_visual_extractions()
         self.do_interaction_visual_extractions()
         self.do_item_textual_extractions()
@@ -121,6 +121,4 @@ class MultimodalFeatureExtractor:
             logging.info(' Number of models to use: %s', str(models.__len__()))
 
             _execute_extraction_from_models_list(models, cnn_feature_extractor, textual_dataset, 'textual')
-
-
 
