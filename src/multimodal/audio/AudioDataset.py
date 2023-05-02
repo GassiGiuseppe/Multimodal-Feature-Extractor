@@ -1,7 +1,8 @@
 import os
 import re
-
+import numpy
 from src.internal.father_classes.DatasetFather import DatasetFather
+from src.internal.utils.TextualFileManager import TextualFileManager
 
 
 # the following function is not called right now. but it will be needed in the future
@@ -22,6 +23,7 @@ class TextualDataset(DatasetFather):
     def __init__(self, input_directory_path, output_directory_path):
         super().__init__(input_directory_path, output_directory_path, model_name=None)
         self._text_to_be_cleaned = True
+        self._textual_file_manager = TextualFileManager()
 
     def __getitem__(self, index):
         """
@@ -29,10 +31,16 @@ class TextualDataset(DatasetFather):
             index: is the index in the filenames list from which extract the name of te file to elaborate
         Returns: a String which contains the data of the file. It may be processed and cleaned
         """
-        image_path = os.path.join(self._input_directory_path, self._filenames[index])
-        with open(image_path, 'r') as f:
-            sample = f.read()
-        return self._pre_processing(sample)
+        if self._filenames[index] == '':
+            file_path = self._input_directory_path
+        else:
+            file_path = os.path.join(self._input_directory_path, self._filenames[index])
+        self._textual_file_manager.set_file_path(file_path)
+        element_list = self._textual_file_manager.get_element_list()
+        preprocessed_list = []
+        for el in element_list:
+            preprocessed_list.append(self._pre_processing(el))
+        return preprocessed_list
 
     def _pre_processing(self, sample):
         if self._text_to_be_cleaned:
@@ -95,3 +103,30 @@ class TextualDataset(DatasetFather):
         Returns: nothing
         """
         self._text_to_be_cleaned = text_to_be_cleaned
+
+    def set_type_of_extraction(self, type_of_extraction):
+        self._textual_file_manager.set_type_of_extraction(type_of_extraction)
+
+    def create_output_file(self, index, extracted_data, model_layer):
+
+        if isinstance(extracted_data, list):
+            # index is to indicate the element from the list of all the elelment in the input folder
+            # idx indicate the element in the same file (csv)
+            for idx, el in enumerate(extracted_data):
+                # generate file name
+                input_file_name = self._filenames[index].split('.')[0] + self._textual_file_manager.build_path_from_id(idx)
+                output_file_name = input_file_name + '.npy'
+
+                # generate output path
+                framework = self._framework_list[0]
+                output_path = os.path.join(self._output_directory_path, framework)
+                output_path = os.path.join(output_path, self._model_name)
+                output_path = os.path.join(output_path, str(model_layer))
+                if not os.path.exists(output_path):
+                    os.makedirs(output_path)
+
+                # create file
+                path = os.path.join(output_path, output_file_name)
+                numpy.save(path, el)
+        else:
+            super().create_output_file(index,extracted_data,model_layer)

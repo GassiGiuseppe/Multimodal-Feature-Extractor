@@ -1,60 +1,14 @@
-import yaml
 import os
+from src.config.YamlFileManager import YamlFileManager
 
 
 class Config:
 
     def __init__(self, config_file_path):
         # both absolute and relative path are fine
-        self._data_dict = None
-        self.__find_yaml_file_path(config_file_path)
-        self.__load_config_from_file()
-
-    def __find_yaml_file_path(self, old_path):
-        """
-        if old_path links to a directory the method search a 'yaml' file in the directory. Otherwise, if it poinst to a
-        file, all is fine. Else the method try to correct the path in a working one, if it fails raise an error
-        Args:
-            old_path: the path given from the user, here starts the search for the file
-
-        Returns:
-            it returns nothing but set the __config_file_path that points directly to the yaml file
-
-        """
-        # the path can be:
-        # - a path only to the directory
-        # - a complete path to a yml/yaml, in this case must be verified that the extension is correct
-        if os.path.isdir(old_path):
-            # search through the directory a file with the correct extension
-            dir_list = os.listdir(old_path)
-            for file in dir_list:
-                # the extensions can be both .yml or .yaml
-                if file[-4:] == '.yml' or file[-5:] == '.yaml':
-                    self.__config_file_path = os.path.join(old_path, file)
-                    return
-        elif os.path.exists(old_path):
-            # the path points directly to the file, all is fine
-            self.__config_file_path = old_path
-        else:
-            # in this case an error has occurred, thanks to the 2 possible extension
-            # maybe the user wrote .yml but the correct extension is .yaml or the opposite
-            if os.path.exists(old_path[-3:] + 'yaml'):
-                self.__config_file_path = old_path[-3:] + 'yaml'
-            elif os.path.exists(old_path[-4:] + 'yml'):
-                self.__config_file_path = old_path[-4:] + 'yml'
-            else:
-                # it is impossible to find the config file
-                raise FileNotFoundError('the path given is wrong: ' + old_path)
-
-    def __load_config_from_file(self):
-        """
-            it simply loads the data contained in the file and call the method __clean_dict on it
-        """
-        # there is no need here to raise an exception if the file is not found
-        # since the os raises it autonomously
-        with open(self.__config_file_path, 'r') as file:
-            data = yaml.safe_load(file)
-        self._data_dict = self.__clean_dict(data)
+        self._yaml_manager = YamlFileManager(config_file_path)
+        self._data_dict = self._yaml_manager.get_raw_dict()
+        self._data_dict = self.__clean_dict(self._data_dict)
 
     def __clean_dict(self, data):
         """
@@ -231,3 +185,55 @@ class Config:
 
         return models
 
+    def get_model_map_path(self):
+        return self._data_dict['model map']
+
+# old
+
+'''
+    def __load_config_from_file(self):
+        """
+            it simply loads the data contained in the file and call the method __clean_dict on it
+        """
+        # there is no need here to raise an exception if the file is not found
+        # since the os raises it autonomously
+        with open(self.__config_file_path, 'r') as file:
+            data = yaml.safe_load(file)
+        self._data_dict = self.__clean_dict(data)
+    
+    def __find_yaml_file_path(self, old_path):
+        """
+        if old_path links to a directory the method search a 'yaml' file in the directory. Otherwise, if it poinst to a
+        file, all is fine. Else the method try to correct the path in a working one, if it fails raise an error
+        Args:
+            old_path: the path given from the user, here starts the search for the file
+
+        Returns:
+            it returns nothing but set the __config_file_path that points directly to the yaml file
+
+        """
+        # the path can be:
+        # - a path only to the directory
+        # - a complete path to a yml/yaml, in this case must be verified that the extension is correct
+        if os.path.isdir(old_path):
+            # search through the directory a file with the correct extension
+            dir_list = os.listdir(old_path)
+            for file in dir_list:
+                # the extensions can be both .yml or .yaml
+                if file[-4:] == '.yml' or file[-5:] == '.yaml':
+                    self.__config_file_path = os.path.join(old_path, file)
+                    return
+        elif os.path.exists(old_path):
+            # the path points directly to the file, all is fine
+            self.__config_file_path = old_path
+        else:
+            # in this case an error has occurred, thanks to the 2 possible extension
+            # maybe the user wrote .yml but the correct extension is .yaml or the opposite
+            if os.path.exists(old_path[-3:] + 'yaml'):
+                self.__config_file_path = old_path[-3:] + 'yaml'
+            elif os.path.exists(old_path[-4:] + 'yml'):
+                self.__config_file_path = old_path[-4:] + 'yml'
+            else:
+                # it is impossible to find the config file
+                raise FileNotFoundError('the path given is wrong: ' + old_path)
+'''

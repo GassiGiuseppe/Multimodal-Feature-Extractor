@@ -3,10 +3,10 @@ import logging
 from tqdm import tqdm
 
 from src.config.Config import Config
-from src.visual.VisualDataset import VisualDataset
-from src.textual.TextualDataset import TextualDataset
-from src.visual.VisualCnnFeatureExtractor import VisualCnnFeatureExtractor
-from src.textual.TextualCnnFeatureExtractor import TextualCnnFeatureExtractor
+from src.multimodal.visual.VisualDataset import VisualDataset
+from src.multimodal.textual.TextualDataset import TextualDataset
+from src.multimodal.visual.VisualCnnFeatureExtractor import VisualCnnFeatureExtractor
+from src.multimodal.textual.TextualCnnFeatureExtractor import TextualCnnFeatureExtractor
 
 
 def _execute_extraction_from_models_list(models, extractor, dataset, modality_type):
@@ -70,6 +70,9 @@ class MultimodalFeatureExtractor:
             visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'])
             cnn_feature_extractor = VisualCnnFeatureExtractor(self._config.get_gpu())
 
+            # visual_dataset.set_model_map(self._config.get_model_map_path())
+            # cnn_feature_extractor.set_model_map(self._config.get_model_map_path())
+
             logging.info(' Working environment created')
             logging.info(' Number of models to use: %s', str(models.__len__()))
             _execute_extraction_from_models_list(models, cnn_feature_extractor, visual_dataset, 'visual')
@@ -88,6 +91,7 @@ class MultimodalFeatureExtractor:
             logging.info(' Working environment created')
             logging.info(' Number of models to use: %s', str(models.__len__()))
 
+            textual_dataset.set_type_of_extraction('items')
             _execute_extraction_from_models_list(models, cnn_feature_extractor, textual_dataset, 'textual')
 
     def do_interaction_visual_extractions(self):
@@ -101,6 +105,9 @@ class MultimodalFeatureExtractor:
             # generate dataset and extractor
             visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'])
             cnn_feature_extractor = VisualCnnFeatureExtractor(self._config.get_gpu())
+
+            # visual_dataset.set_model_map(self._config.get_model_map_path())
+            # cnn_feature_extractor.set_model_map(self._config.get_model_map_path())
 
             logging.info(' Working environment created')
             logging.info(' Number of models to use: %s', str(models.__len__()))
@@ -120,5 +127,9 @@ class MultimodalFeatureExtractor:
             logging.info(' Working environment created')
             logging.info(' Number of models to use: %s', str(models.__len__()))
 
+            textual_dataset.set_type_of_extraction('interactions')
             _execute_extraction_from_models_list(models, cnn_feature_extractor, textual_dataset, 'textual')
+
+    def do_interaction_audio_extractions(self):
+        print('blabla')
 

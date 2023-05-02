@@ -45,7 +45,7 @@ termcolor==1.1.0
 threadpoolctl==2.1.0
 -f https://download.pytorch.org/whl/torch_stable.html
 torch==1.10.2
-torchvision==0.8.2+cu101
+# torchvision==0.8.2+cu101 it have to use 0.13.0 !!!!
 sentence-transformers
 typing-extensions==3.7.4.3
 urllib3==1.26.4
@@ -58,3 +58,4 @@ PyYAML~=6.0
 config~=0.5.1
 transformers~=4.18.0
 tqdm~=4.64.1
+torchvision~=0.11.3

@@ -10,18 +10,19 @@
 # if it is visual extraction then there is another flag in model: reshape(x,y)
 # otherwise if is a textual extraction: clear_text True/False
 
-- dataset: 'C:\Users\User\OneDrive\Desktop\UNI\TESI\DatasetPerTest\archivio'
+- dataset: 'D:\dati\uni\tesi\datasetFolder'
 - gpu list: -1
+- model map: 'modelMap.yml'
 
 - visual:
 
     - items:
-        - input: 'images'
+        - input: 'inputVisual'
         - output: 'outputVisual'
         - model: [
              #{ name: 'ResNet50' , output_layers: [ 'avg_pool','conv5_block3_out' ], reshape: [ 224,224 ], framework: ['tensorflow'] },
              #{ name: 'AlexNet',  output_layers: 5, reshape: [ 224,224 ]},
-             { name: 'ResNet50' , output_layers: 3 , reshape: [ 224,224 ], framework: ['torch'] }
+             #{ name: 'ResNet50' , output_layers: 3 , reshape: [ 224,224 ], framework: ['torch'] }
             ]
     - interactions:
         - input:
@@ -31,7 +32,7 @@
 - textual:
 
     - items:
-        - input: 'description'
+        - input: 'inputTextual\esempio.csv'
         - output: 'outputTextual'
         - model: [
               { name: 'nlptown/bert-base-multilingual-uncased-sentiment',  output_layers: 5, clear_text: True }
@@ -40,3 +41,14 @@
         - input:
         - output:
         - model: []
+
+- audio:
+
+      - interactions:
+            - input:
+            - output:
+            - model: []
+
+
+
+

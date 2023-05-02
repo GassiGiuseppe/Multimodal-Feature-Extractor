@@ -23,5 +23,12 @@ class TextualCnnFeatureExtractor(CnnFeatureExtractorFather):
         self._tokenizer = sentiment_pipeline.tokenizer
 
     def extract_feature(self, sample_input):
-        output = self._tokenizer.encode_plus(sample_input, return_tensors="pt").to(self._device)
-        return self._model(**output.to(self._device)).pooler_output.detach().cpu().numpy()
+        if isinstance(sample_input, list):
+            output_list = []
+            for input_el in sample_input:
+                output = self._tokenizer.encode_plus(input_el, return_tensors="pt").to(self._device)
+                output_list.append(self._model(**output.to(self._device)).pooler_output.detach().cpu().numpy())
+            return output_list
+        else:
+            output = self._tokenizer.encode_plus(sample_input, return_tensors="pt").to(self._device)
+            return self._model(**output.to(self._device)).pooler_output.detach().cpu().numpy()
