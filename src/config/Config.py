@@ -68,6 +68,12 @@ class Config:
         else:
             return '-1'
 
+    def get_visual_working_environment_list(self):
+        return list(self._data_dict['visual'].keys())
+
+    def get_textual_working_environment_list(self):
+        return list(self._data_dict['textual'].keys())
+
     def has_config(self, origin_of_elaboration, type_of_extraction):
         """
         Search the config in the data dicts then check that this config have values in it
@@ -184,7 +190,6 @@ class Config:
                     model.update({'framework': ['tensorflow', 'torch']})
 
         return models
-
     def get_model_map_path(self):
         return self._data_dict['model map']
 

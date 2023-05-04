@@ -130,6 +130,27 @@ class MultimodalFeatureExtractor:
             textual_dataset.set_type_of_extraction('interactions')
             _execute_extraction_from_models_list(models, cnn_feature_extractor, textual_dataset, 'textual')
 
+    def execute_extractions_second(self):
+        visual_work_env_ls = self._config.get_visual_working_environment_list()
+        print(visual_work_env_ls)
+        self._execute_visual_extractions(visual_work_env_ls)
+        textual_work_env_ls = self._config.get_textual_working_environment_list()
+        print(textual_work_env_ls)
+
+    def _execute_visual_extractions(self, work_env_ls):
+        for work_env in work_env_ls:
+            if self._config.has_config(work_env, 'visual'):
+                # logging...
+                # get paths and models
+                working_paths = self._config.paths_for_extraction(work_env, 'visual')
+                models = self._config.get_models_list(work_env, 'visual')
+                # generate dataset and extractor
+                visual_dataset = VisualDataset(working_paths['input_path'], working_paths['output_path'])
+                cnn_feature_extractor = VisualCnnFeatureExtractor(self._config.get_gpu())
+
+                # logging.info(' Working environment created')
+                # logging.info(' Number of models to use: %s', str(models.__len__()))
+                _execute_extraction_from_models_list(models, cnn_feature_extractor, visual_dataset, 'visual')
     def do_interaction_audio_extractions(self):
         print('blabla')
 

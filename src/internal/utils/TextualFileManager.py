@@ -23,16 +23,24 @@ class TextualFileManager:
         elif self._type_of_extraction == 'items':
             return str(id)
 
-    def get_element_list(self):
+    def initiate_element_list_and_get_len(self):
         internal_list = []
-        element_list = []
+        # element_list = []
         with open(self._file_path, newline='') as csvfile:
             file_dict = csv.DictReader(csvfile, delimiter=',')
             for row in file_dict:
                 internal_list.append(row)
-                if self._type_of_extraction == 'interactions':
-                    element_list.append(row['comment'])
-                elif self._type_of_extraction == 'items':
-                    element_list.append(row['description'])
+                # if self._type_of_extraction == 'interactions':
+                #     element_list.append(row['comment'])
+                # elif self._type_of_extraction == 'items':
+                #     element_list.append(row['description'])
         self._internal_list = internal_list
-        return element_list
+        return len(internal_list)
+
+    def get_item_from_id(self, idx):
+        row = self._internal_list[idx]
+        if self._type_of_extraction == 'interactions':
+            return row['comment']
+        elif self._type_of_extraction == 'items':
+            return row['description']
+
