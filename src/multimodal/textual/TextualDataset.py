@@ -162,5 +162,4 @@ class TextualDataset(DatasetFather):
 
         # create file
         path = os.path.join(output_path, output_file_name)
-        print(path)
         numpy.save(path, extracted_data)

@@ -27,7 +27,7 @@ class TextualFileManager:
         internal_list = []
         # element_list = []
         with open(self._file_path, newline='') as csvfile:
-            file_dict = csv.DictReader(csvfile, delimiter=',')
+            file_dict = csv.DictReader(csvfile, delimiter='\t')
             for row in file_dict:
                 internal_list.append(row)
                 # if self._type_of_extraction == 'interactions':

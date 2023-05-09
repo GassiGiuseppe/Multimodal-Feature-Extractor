@@ -1,19 +1,18 @@
 import tensorflow as tf
 import torch
 import numpy as np
+# import torchvision.models import
+# from torchvision import
 import torchvision
-# from torchvision import get_weight
 import tensorflow
 from src.internal.utils.model_map import tensorflow_models_for_extraction, torch_models_for_extraction
 from src.internal.father_classes.CnnFeatureExtractorFather import CnnFeatureExtractorFather
+import sys
 
 
 class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
     def __init__(self, gpu='-1'):
         super().__init__(gpu)
-
-    def set_model_map(self, model_map_path):
-        print(model_map_path)
 
     def set_model(self, model_name):
         """
@@ -24,9 +23,11 @@ class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
         """
         torchvision_list = list(torchvision.models.__dict__)
         tensorflow_keras_list = list(tensorflow.keras.applications.__dict__)
-        # print(torch.hub.list('pytorch/vision', force_reload=True))
+        # sys.modules.pop("torchvision")
+        # print(torch.hub.list('pytorch/vision', force_reload=False, skip_validation=False))
         # print(tensorflow_keras_list)
         # print(torchvision_list)
+
         self._model_name = model_name
         if self._model_name in tensorflow_keras_list and 'tensorflow' in self._framework_list:
             # self._model = tensorflow_models_for_extraction[self._model_name]()
