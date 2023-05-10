@@ -175,9 +175,11 @@ class Config:
                 elif framework_value == 'tensorflow' or framework_value == 'torch':
                     model.update({'framework': [framework_value]})
 
-                elif framework_value != ['tensorflow'] and framework_value != ['torch']:
+                # the following elif was written whit the idea that every type of extraction would have only torch or
+                # tensorflow. Now this only make sense in the visual case
+                # elif framework_value != ['tensorflow'] and framework_value != ['torch']:
 
-                    raise ValueError('the framework tag in the yaml file is not written correctly')
+                    # raise ValueError('the framework tag in the yaml file is not written correctly')
             else:
                 # the framework is not set
                 if type_of_extraction == 'textual':

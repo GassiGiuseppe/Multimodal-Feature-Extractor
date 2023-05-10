@@ -3,6 +3,8 @@ from transformers import pipeline
 import torchaudio
 from src.internal.father_classes.CnnFeatureExtractorFather import CnnFeatureExtractorFather
 import numpy
+from transformers import Wav2Vec2Model
+
 
 class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
     def __init__(self, gpu='-1'):
@@ -23,27 +25,28 @@ class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
         # model.to(self._device)
         # print(list(torchaudio.transforms.__dict__))
         # torchaudio.transforms.
-        self._model_to_initialize = getattr(torchaudio.pipelines, model_name)
+        if 'torch' in self._framework_list or 'torchaudio' in self._framework_list:
+            self._model_to_initialize = getattr(torchaudio.pipelines, model_name)
+        elif 'transformers' in self._framework_list:
+            self._model = Wav2Vec2Model.from_pretrained(model_name)
 
     def extract_feature(self, sample_input):
         if 'torch' in self._framework_list or 'torchaudio' in self._framework_list:
             audio = sample_input[0]
             sample_rate = sample_input[1]
             self._model = self._model_to_initialize.get_model()
-            features = self._model.extract_feature(audio)
-            # audio = torch.from_numpy(audio)
-            # spectral_transform = torchaudio.transforms.Spectrogram(n_fft=2048, win_length=2048, hop_length=1024)
-            # spectral_features = spectral_transform(audio)
-            #audio = torch.nn.functional.pad(audio, (0, 78163 - audio.shape[-1]), mode='constant', value=0)
 
-            # normalized feature
-            log_spectrogram = torchaudio.transforms.AmplitudeToDB()(features)
+            # extraction
+            features, _ = self._model.extract_features(audio, num_layers=self._output_layer)
 
-            # convert to numpy
-            log_spectrogram_np = log_spectrogram.numpy()
+            # return the N-Dimensional Tensor as a numpy array
+            return numpy.array(features)
+        if 'transformers' in self._framework_list:
+            # uses less computation since does not calculate gradients
+            with torch.no_grad():
+                #
+                output = self._model(sample_input, output_hidden_states=True)
 
-            # layer output
-            # layer_output = features[self._output_layer]
-
-
-            return log_spectrogram_np
+                #
+                layer_output = output.hidden_states[self._output_layer]
+                return layer_output.numpy()
