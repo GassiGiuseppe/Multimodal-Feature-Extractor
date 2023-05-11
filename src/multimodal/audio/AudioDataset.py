@@ -8,7 +8,7 @@ import soundfile
 from transformers import Wav2Vec2Processor
 
 
-# the following function is not called right now. but it will be needed in the future
+
 
 
 class AudioDataset(DatasetFather):
