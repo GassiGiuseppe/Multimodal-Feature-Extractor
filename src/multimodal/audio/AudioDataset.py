@@ -29,8 +29,6 @@ class AudioDataset(DatasetFather):
 
     def set_model(self, model):
         self._model_name = model
-        if 'transformers' in self._framework_list:
-            self._model_for_preprocessing = Wav2Vec2Processor.from_pretrained(self._model_name)
 
     def _pre_processing(self, pre_process_input):
         audio = pre_process_input[0]
@@ -40,12 +38,6 @@ class AudioDataset(DatasetFather):
             waveform = torchaudio.functional.resample(audio, rate, bundle.sample_rate)
             return [waveform, bundle.sample_rate]
         elif 'transformers' in self._framework_list:
-            '''
-            new_sample_rate = self._model_for_preprocessing.feature_extractor.sampling_rate
-            resampler = torchaudio.transforms.Resample(rate, new_sample_rate)
-            waveform = resampler(audio[0])
-            waveform = waveform.unsqueeze(0)
-            return self._model_for_preprocessing(waveform, sampling_rate=new_sample_rate,
-                                                 return_tensors="pt").input_values
-            '''
-            return pre_process_input
+            pre_processor = torchaudio.transforms.Resample(rate, 16000)
+            resempled_audio = pre_processor(audio)
+            return [resempled_audio, 16000]
