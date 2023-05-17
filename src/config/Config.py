@@ -1,10 +1,17 @@
 import os
-from src.config.YamlFileManager import YamlFileManager
+from src.internal.utils.YamlFileManager import YamlFileManager
 
 
 class Config:
 
     def __init__(self, config_file_path):
+        """
+        Manage the configuration within the config yaml file. This configuration are later needed to understand what
+        to do
+
+        Args: config_file_path: it is a string, it can be both absolute path to the file, or relative to the inside
+        of the Multimodal-Feature-Extractor folder
+        """
         # both absolute and relative path are fine
         self._yaml_manager = YamlFileManager(config_file_path)
         self._data_dict = self._yaml_manager.get_raw_dict()
@@ -12,7 +19,7 @@ class Config:
 
     def __clean_dict(self, data):
         """
-        It crosses in every element of the dict in search of a list of dict to transfrom in a big dict:
+        It crosses in every element of the dict in search of a list of dict to transform in a big dict:
         if there is a dict, it crosses every value (recalling this method).
         If there is a list, it crosses every item (recalling this method). then if the items are dicts the list
         is swapped with a big dict
@@ -68,18 +75,12 @@ class Config:
         else:
             return '-1'
 
-    def get_visual_working_environment_list(self):
-        return list(self._data_dict['visual'].keys())
-
-    def get_textual_working_environment_list(self):
-        return list(self._data_dict['textual'].keys())
-
     def has_config(self, origin_of_elaboration, type_of_extraction):
         """
         Search the config in the data dicts then check that this config have values in it
         Args:
             origin_of_elaboration: 'items' or 'interactions'
-            type_of_extraction: 'textual' or 'visual'
+            type_of_extraction: 'textual', 'visual' or 'audio'
 
         Returns: Bool True/False if contains the configuration
 
@@ -104,7 +105,7 @@ class Config:
 
         Args:
             origin_of_elaboration: 'items' or 'interactions'
-            type_of_extraction: 'textual' or 'visual'
+            type_of_extraction: 'textual', 'visual' or 'audio'
 
         Returns: a dict as { 'input_path': input path, 'output_path': output_path }
 
@@ -124,9 +125,11 @@ class Config:
             origin_of_elaboration: 'items' or 'interactions'
             type_of_extraction: 'textual' or 'visual'
 
-        Returns: a dict of the models, every model is a dict with 'output_layers': the layers of extraction,
-        'reshape': how to change the item, 'framework': framework to work with tensorflow or torch
-
+        Returns: a list of the models, every model is a dict with
+        'name': the name of the model, in same cases as transformers is repo/model name,
+        'output_layers': the layers of extraction,
+        'framework': framework to work with tensorflow/torch/transformers
+         and a custom flag to manage the preprocessing of the data
         """
 
         models = self._data_dict[type_of_extraction][origin_of_elaboration]['model']
@@ -140,13 +143,15 @@ class Config:
             # Framework elaboration
             # - if INPUT FRAMEWORK is ['tensorflow', 'torch'] then two different model dicts will be added to the list,
             #   each one identical to the other except for the fact that it contains only one of the 2 type of framework
+            #   WARNING: the feature to do both of them in the same model declaration is forbidden since they use
+            #   different way to call their layers
             # - if OUTPUT FRAMEWORK is ['tensorflow', 'torch'] then outside of this method it means that
             #   the framework in which operate is not known but only one of them will be executed
             if 'framework' in model.keys():
                 framework_value = model['framework']
 
                 if framework_value == ['tensorflow', 'torch']:
-
+                    # this setting does not work properly because the two framework used calls different layers
                     first_model = model
                     first_model.update({'framework': ['tensorflow']})
 
@@ -169,78 +174,32 @@ class Config:
                     # models_list.append(second_model)
                     # models_list.append(first_model)
 
-                    # this setting does not work properly because the two framework uses calls different layers
+                    # this setting does not work properly because the two framework used calls different layers
                     raise ValueError(' unfortunately calling both framework simultaneity doesnt work')
                 # framework value must be a list
-                elif framework_value == 'tensorflow' or framework_value == 'torch':
+                elif isinstance(framework_value, str):
                     model.update({'framework': [framework_value]})
 
-                # the following elif was written whit the idea that every type of extraction would have only torch or
+                # the following elif was written with the idea that every type of extraction would have only torch or
                 # tensorflow. Now this only make sense in the visual case
                 # elif framework_value != ['tensorflow'] and framework_value != ['torch']:
-
-                    # raise ValueError('the framework tag in the yaml file is not written correctly')
+                # raise ValueError('the framework tag in the yaml file is not written correctly')
             else:
                 # the framework is not set
                 if type_of_extraction == 'textual':
                     # textual case
                     # in this case we use the 'transformers' framework
                     model.update({'framework': ['transformers']})
-                else:
+                elif type_of_extraction == 'visual':
                     # it is in the visual case, it uses tensorflow or torch, but doesn't know which one
                     # so both are set as plausible
                     model.update({'framework': ['tensorflow', 'torch']})
+                elif type_of_extraction == 'audio':
+                    # it is the audio case, it uses torchaudio or transformers
+                    # both are plausible, it will try torchaudio and if the model is not in its list, it will try
+                    # transformers
+                    model.update({'framework': ['torch', 'transformers']})
 
         return models
-    def get_model_map_path(self):
-        return self._data_dict['model map']
 
-# old
 
-'''
-    def __load_config_from_file(self):
-        """
-            it simply loads the data contained in the file and call the method __clean_dict on it
-        """
-        # there is no need here to raise an exception if the file is not found
-        # since the os raises it autonomously
-        with open(self.__config_file_path, 'r') as file:
-            data = yaml.safe_load(file)
-        self._data_dict = self.__clean_dict(data)
-    
-    def __find_yaml_file_path(self, old_path):
-        """
-        if old_path links to a directory the method search a 'yaml' file in the directory. Otherwise, if it poinst to a
-        file, all is fine. Else the method try to correct the path in a working one, if it fails raise an error
-        Args:
-            old_path: the path given from the user, here starts the search for the file
-
-        Returns:
-            it returns nothing but set the __config_file_path that points directly to the yaml file
-
-        """
-        # the path can be:
-        # - a path only to the directory
-        # - a complete path to a yml/yaml, in this case must be verified that the extension is correct
-        if os.path.isdir(old_path):
-            # search through the directory a file with the correct extension
-            dir_list = os.listdir(old_path)
-            for file in dir_list:
-                # the extensions can be both .yml or .yaml
-                if file[-4:] == '.yml' or file[-5:] == '.yaml':
-                    self.__config_file_path = os.path.join(old_path, file)
-                    return
-        elif os.path.exists(old_path):
-            # the path points directly to the file, all is fine
-            self.__config_file_path = old_path
-        else:
-            # in this case an error has occurred, thanks to the 2 possible extension
-            # maybe the user wrote .yml but the correct extension is .yaml or the opposite
-            if os.path.exists(old_path[-3:] + 'yaml'):
-                self.__config_file_path = old_path[-3:] + 'yaml'
-            elif os.path.exists(old_path[-4:] + 'yml'):
-                self.__config_file_path = old_path[-4:] + 'yml'
-            else:
-                # it is impossible to find the config file
-                raise FileNotFoundError('the path given is wrong: ' + old_path)
-'''
