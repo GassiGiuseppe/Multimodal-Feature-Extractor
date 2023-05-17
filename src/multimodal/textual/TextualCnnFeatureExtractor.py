@@ -1,5 +1,7 @@
 from transformers import pipeline
 
+import torch
+import torchtext
 from src.internal.father_classes.CnnFeatureExtractorFather import CnnFeatureExtractorFather
 
 
@@ -15,7 +17,10 @@ class TextualCnnFeatureExtractor(CnnFeatureExtractorFather):
                         NOTE: in this case we are using transformers so the model name have to be in its list
         Returns: nothing but it initializes the protected model and tokenizer attributes, later used for extraction
         """
+        # print(list(torchtext.data.functional.load_sp_model()))
+        # print(torchtext.version.__version__)
         if 'transformers' in self._framework_list:
+
             sentiment_pipeline = pipeline(model=model_name)
             model = list(sentiment_pipeline.model.children())[-3]
             model.eval()
