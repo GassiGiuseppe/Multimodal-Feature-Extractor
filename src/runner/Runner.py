@@ -51,7 +51,7 @@ class MultimodalFeatureExtractor:
 
     def __init__(self, config_file_path=r'./config/config.yml'):
         self._config = Config(config_file_path)
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
         # set gpu to use
         os.environ['CUDA_VISIBLE_DEVICES'] = self._config.get_gpu()
 
