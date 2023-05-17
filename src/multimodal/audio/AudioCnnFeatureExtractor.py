@@ -8,6 +8,11 @@ from transformers import Wav2Vec2Model, Wav2Vec2FeatureExtractor, Wav2Vec2Proces
 
 class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
     def __init__(self, gpu='-1'):
+        """
+
+        Args:
+            gpu:
+        """
         self._model_to_initialize = None
         self._tokenizer = None
         super().__init__(gpu)
@@ -27,6 +32,14 @@ class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
             self._model = Wav2Vec2Model.from_pretrained(self._model_name)
 
     def extract_feature(self, sample_input):
+        """
+
+        Args:
+            sample_input:
+
+        Returns:
+
+        """
         audio = sample_input[0]
         sample_rate = sample_input[1]
         if 'torch' in self._framework_list or 'torchaudio' in self._framework_list:
@@ -34,7 +47,7 @@ class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
             features, _ = self._model.extract_features(audio, num_layers=self._output_layer)
             # return the N-Dimensional Tensor as a numpy array
             return numpy.array(features)
-        if 'transformers' in self._framework_list:
+        elif 'transformers' in self._framework_list:
             # feature extraction
             outputs = self._model(audio, output_hidden_states=True)
             # layer extraction
