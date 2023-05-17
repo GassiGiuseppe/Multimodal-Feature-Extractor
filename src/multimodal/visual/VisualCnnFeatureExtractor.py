@@ -18,24 +18,16 @@ class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
         """
         Args:
             model_name: is the name of the model to use.
-                        NOTE: the model name have to be in the model map in utils
         Returns: nothing but it initializes the protected model attribute, later used for extraction
         """
         torchvision_list = list(torchvision.models.__dict__)
         tensorflow_keras_list = list(tensorflow.keras.applications.__dict__)
-        # sys.modules.pop("torchvision")
-        # print(torch.hub.list('pytorch/vision', force_reload=False, skip_validation=False))
-        # print(tensorflow_keras_list)
-        # print(torchvision_list)
 
         self._model_name = model_name
         if self._model_name in tensorflow_keras_list and 'tensorflow' in self._framework_list:
-            # self._model = tensorflow_models_for_extraction[self._model_name]()
             self._model = getattr(tensorflow.keras.applications, self._model_name)()
         elif self._model_name.lower() in torchvision_list and 'torch' in self._framework_list:
             self._model = getattr(torchvision.models, self._model_name.lower())(pretrained=True)
-            # self._model = torch_models_for_extraction[self._model_name](pretrained=True)
-            # self._model = torch.hub.load('pytorch/vision', self._model_name.lower(), pretrained=True)
             self._model.to(self._device)
             self._model.eval()
         else:
