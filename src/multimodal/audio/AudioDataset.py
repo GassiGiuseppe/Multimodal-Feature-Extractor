@@ -8,9 +8,6 @@ import soundfile
 from transformers import Wav2Vec2Processor
 
 
-
-
-
 class AudioDataset(DatasetFather):
 
     def __init__(self, input_directory_path, output_directory_path):
@@ -43,8 +40,12 @@ class AudioDataset(DatasetFather):
             waveform = torchaudio.functional.resample(audio, rate, bundle.sample_rate)
             return [waveform, bundle.sample_rate]
         elif 'transformers' in self._framework_list:
+            '''
             new_sample_rate = self._model_for_preprocessing.feature_extractor.sampling_rate
             resampler = torchaudio.transforms.Resample(rate, new_sample_rate)
             waveform = resampler(audio[0])
             waveform = waveform.unsqueeze(0)
-            return self._model_for_preprocessing(waveform, sampling_rate=new_sample_rate, return_tensors="pt").input_values
+            return self._model_for_preprocessing(waveform, sampling_rate=new_sample_rate,
+                                                 return_tensors="pt").input_values
+            '''
+            return pre_process_input
