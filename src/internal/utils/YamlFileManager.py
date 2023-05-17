@@ -45,6 +45,8 @@ class YamlFileManager:
     def get_raw_dict(self):
         """
             it simply loads the data contained in the file
+            Returns:
+                the String that is contained in the yaml file
         """
         # there is no need here to raise an exception if the file is not found
         # since the os raises it autonomously
