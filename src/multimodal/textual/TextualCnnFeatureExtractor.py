@@ -15,12 +15,13 @@ class TextualCnnFeatureExtractor(CnnFeatureExtractorFather):
                         NOTE: in this case we are using transformers so the model name have to be in its list
         Returns: nothing but it initializes the protected model and tokenizer attributes, later used for extraction
         """
-        sentiment_pipeline = pipeline(model=model_name)
-        model = list(sentiment_pipeline.model.children())[-3]
-        model.eval()
-        model.to(self._device)
-        self._model = model
-        self._tokenizer = sentiment_pipeline.tokenizer
+        if 'transformers' in self._framework_list:
+            sentiment_pipeline = pipeline(model=model_name)
+            model = list(sentiment_pipeline.model.children())[-3]
+            model.eval()
+            model.to(self._device)
+            self._model = model
+            self._tokenizer = sentiment_pipeline.tokenizer
 
     def extract_feature(self, sample_input):
         '''
@@ -34,5 +35,6 @@ class TextualCnnFeatureExtractor(CnnFeatureExtractorFather):
             output = self._tokenizer.encode_plus(sample_input, return_tensors="pt").to(self._device)
             return self._model(**output.to(self._device)).pooler_output.detach().cpu().numpy()
         '''
-        output = self._tokenizer.encode_plus(sample_input, return_tensors="pt").to(self._device)
-        return self._model(**output.to(self._device)).pooler_output.detach().cpu().numpy()
+        if 'transformers' in self._framework_list:
+            output = self._tokenizer.encode_plus(sample_input, return_tensors="pt").to(self._device)
+            return self._model(**output.to(self._device)).pooler_output.detach().cpu().numpy()
