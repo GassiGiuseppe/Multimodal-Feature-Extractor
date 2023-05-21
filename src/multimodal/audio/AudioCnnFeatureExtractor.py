@@ -44,9 +44,11 @@ class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
         sample_rate = sample_input[1]
         if 'torch' in self._framework_list or 'torchaudio' in self._framework_list:
             # extraction
+            # num_layer is the number of layers to go trought
             features, _ = self._model.extract_features(audio, num_layers=self._output_layer)
+            feature = features[-1]
             # return the N-Dimensional Tensor as a numpy array
-            return numpy.array(features)
+            return feature.detach().numpy()
         elif 'transformers' in self._framework_list:
             # feature extraction
             outputs = self._model(audio, output_hidden_states=True)

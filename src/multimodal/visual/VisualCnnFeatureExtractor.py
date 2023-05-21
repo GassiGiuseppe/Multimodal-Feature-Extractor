@@ -5,6 +5,8 @@ import numpy as np
 # from torchvision import
 import torchvision
 import tensorflow
+# from torchvision.models import ResNet50_Weights
+
 from src.internal.utils.model_map import tensorflow_models_for_extraction, torch_models_for_extraction
 from src.internal.father_classes.CnnFeatureExtractorFather import CnnFeatureExtractorFather
 import sys
@@ -27,7 +29,7 @@ class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
         if self._model_name in tensorflow_keras_list and 'tensorflow' in self._framework_list:
             self._model = getattr(tensorflow.keras.applications, self._model_name)()
         elif self._model_name.lower() in torchvision_list and 'torch' in self._framework_list:
-            self._model = getattr(torchvision.models, self._model_name.lower())(pretrained=True)
+            self._model = getattr(torchvision.models, self._model_name.lower())(weights='DEFAULT')
             self._model.to(self._device)
             self._model.eval()
         else:

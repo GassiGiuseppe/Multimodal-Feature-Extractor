@@ -1,7 +1,7 @@
 from transformers import pipeline
 
 import torch
-import torchtext
+# import torchtext
 from src.internal.father_classes.CnnFeatureExtractorFather import CnnFeatureExtractorFather
 
 
