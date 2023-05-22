@@ -99,7 +99,7 @@ class Config:
 
     def paths_for_extraction(self, origin_of_elaboration, type_of_extraction):
         """
-
+        Gives the working environments
         Args:
             origin_of_elaboration: 'items' or 'interactions'
             type_of_extraction: 'textual', 'visual' or 'audio'
