@@ -85,9 +85,6 @@ class Config:
         Returns: Bool True/False if contains the configuration
 
         """
-        # example of origin_of_elaboration: 'items', 'interactions'
-        # example of type_of_extractions: 'textual', 'visual'
-        # if origin_of_elaboration in self._data_dict and type_of_extraction in self._data_dict[origin_of_elaboration]:
         if type_of_extraction in self._data_dict and origin_of_elaboration in self._data_dict[type_of_extraction]:
             local_dict = self._data_dict[type_of_extraction][origin_of_elaboration]
             # check if local dict has input/output/model
