@@ -14,6 +14,11 @@ import sys
 
 class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
     def __init__(self, gpu='-1'):
+        """
+        It does Image Extraction. It is needed also to give the model name, the framework and the output_layer. You can
+        later change one of them as needed.
+        :param gpu:
+        """
         super().__init__(gpu)
 
     def set_model(self, model_name):
@@ -36,6 +41,12 @@ class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
             raise NotImplemented('This feature extractor has not been added yet!')
 
     def extract_feature(self, image):
+        """
+        It does extract the feature from the input. Framework, model and layer HAVE TO be already set with their set
+        methods.
+        :param image: the data of the image preprocessed
+        :return: a numpy array that will be put in a .npy file calling the right Dataset Class' method
+        """
         torchvision_list = list(torchvision.models.__dict__)
         if self._model_name.lower() in torchvision_list and 'torch' in self._framework_list:
             # torch
