@@ -21,6 +21,12 @@ def complex_spit_of_list_of_string(sample, splitter):
 class TextualDataset(DatasetFather):
 
     def __init__(self, input_directory_path, output_directory_path):
+        """
+        Manage the Text Dataset (folder of input and folder of output).
+        It will Manage data of input (and their preprocessing), and data of output
+        :param input_directory_path: folder of the input data to elaborate as String
+        :param output_directory_path: folder of where put Output as String, it will be created if does not exist
+        """
         super().__init__(input_directory_path, output_directory_path, model_name=None)
         self._text_to_be_cleaned = True
         self._textual_file_manager = TextualFileManager()
@@ -30,6 +36,12 @@ class TextualDataset(DatasetFather):
             self._prepare_environment_for_single_file_extractions()
 
     def _prepare_environment_for_single_file_extractions(self):
+        """
+        it prepares the env to utilize only one file
+        the runner cycles trought the num samples. if there is only one file the num samples is the number of row of
+        the file. Right now this is the only choice, but in the future maybe a user will need to give different files,
+        so this func is accommodated to build this kind of login in the future
+        """
         if self._filenames[0] == '':
             file_path = self._input_directory_path
         else:
@@ -39,25 +51,22 @@ class TextualDataset(DatasetFather):
 
     def __getitem__(self, index):
         """
+        It retrieves a sample preprocessed given its id. Only in the Textual case the id refers to the row of the file
         Args:
             index: is the index in the filenames list from which extract the name of te file to elaborate
         Returns: a String which contains the data of the file. It may be processed and cleaned
         """
-        '''
-        if self._filenames[index] == '':
-            file_path = self._input_directory_path
-        else:
-            file_path = os.path.join(self._input_directory_path, self._filenames[index])
-        self._textual_file_manager.set_file_path(file_path)
-        element_list = self._textual_file_manager.get_element_list()
-        preprocessed_list = []
-        for el in element_list:
-            preprocessed_list.append(self._pre_processing(el))
-        return preprocessed_list
-        '''
+
         return self._textual_file_manager.get_item_from_id(index)
 
     def _pre_processing(self, sample):
+        """
+        It cleans the String
+        :param sample: String to clean
+        :return: Cleaned String
+        """
+        # the following code is inspired by:
+        # https://github.com/JarenceSJ/ReviewGraph/blob/main/nlp_util.py#L123
         if self._text_to_be_cleaned:
             sample = re.sub(r"[^A-Za-z0-9',.!;?()]", " ", sample)
 
@@ -112,6 +121,8 @@ class TextualDataset(DatasetFather):
 
     def set_clean_flag(self, text_to_be_cleaned):
         """
+        It does set the flag to clean the String before preprocessing, this phase is heavily recommended, therefore the
+        flag by default is set to True
         Args:
             text_to_be_cleaned: flag True/False if the text will be preprocessed and cleaned
 
@@ -120,33 +131,20 @@ class TextualDataset(DatasetFather):
         self._text_to_be_cleaned = text_to_be_cleaned
 
     def set_type_of_extraction(self, type_of_extraction):
+        """
+        It set the origin of the data, from item or users interactions, it is needed later to read correctly the tsv
+        :param type_of_extraction: 'items' or 'interactions'
+        """
         self._textual_file_manager.set_type_of_extraction(type_of_extraction)
 
     def create_output_file(self, index, extracted_data, model_layer):
-        '''
-        if isinstance(extracted_data, list):
-            # index is to indicate the element from the list of all the elelment in the input folder
-            # idx indicate the element in the same file (csv)
-            for idx, el in enumerate(extracted_data):
-                # generate file name
-                input_file_name = self._filenames[index].split('.')[0] + self._textual_file_manager.build_path_from_id(
-                    idx)
-                output_file_name = input_file_name + '.npy'
-
-                # generate output path
-                framework = self._framework_list[0]
-                output_path = os.path.join(self._output_directory_path, framework)
-                output_path = os.path.join(output_path, self._model_name)
-                output_path = os.path.join(output_path, str(model_layer))
-                if not os.path.exists(output_path):
-                    os.makedirs(output_path)
-
-                # create file
-                path = os.path.join(output_path, output_file_name)
-                numpy.save(path, el)
-        else:
-            super().create_output_file(index, extracted_data, model_layer)
-        '''
+        """
+        Overwrites the method of the Father class because all the Strings come from the same file, and it only changes
+        the row
+        :param index: it indicates the row of the String
+        :param extracted_data: the output to put in the file
+        :param model_layer: the layer used, it is a String, it will be shown on the final name
+        """
         # generate file name
         input_file_name = self._filenames[0].split('.')[0] + self._textual_file_manager.build_path_from_id(
             index)
