@@ -19,6 +19,7 @@ class Config:
 
     def __clean_dict(self, data):
         """
+        It cleans the dict to be easily read in the future.
         It crosses in every element of the dict in search of a list of dict to transform in a big dict:
         if there is a dict, it crosses every value (recalling this method).
         If there is a list, it crosses every item (recalling this method). then if the items are dicts the list
@@ -179,8 +180,8 @@ class Config:
 
                 # the following elif was written with the idea that every type of extraction would have only torch or
                 # tensorflow. Now this only make sense in the visual case
-                # elif framework_value != ['tensorflow'] and framework_value != ['torch']:
-                # raise ValueError('the framework tag in the yaml file is not written correctly')
+                #   elif framework_value != ['tensorflow'] and framework_value != ['torch']:
+                #       raise ValueError('the framework tag in the yaml file is not written correctly')
             else:
                 # the framework is not set
                 if type_of_extraction == 'textual':
