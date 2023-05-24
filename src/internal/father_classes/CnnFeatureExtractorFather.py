@@ -17,6 +17,10 @@ class CnnFeatureExtractorFather:
         self._output_layer = output_layer
 
     def set_framework(self, framework_list):
+        """
+        It set the framework to use as e.g: 'torch', 'tensorflow', 'transformers', 'torchaudio'
+        :param framework_list: both list of String or String are acceptable
+        """
         self._framework_list = framework_list
 
     def set_model(self, model_name):

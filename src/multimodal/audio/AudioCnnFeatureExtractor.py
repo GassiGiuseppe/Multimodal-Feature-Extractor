@@ -9,9 +9,10 @@ from transformers import Wav2Vec2Model, Wav2Vec2FeatureExtractor, Wav2Vec2Proces
 class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
     def __init__(self, gpu='-1'):
         """
-
+        It does Audio Extraction. It is needed also to give the model name, the framework and the output_layer. You can
+        later change one of them as needed.
         Args:
-            gpu:
+            gpu: String on which is explained which gpu to use. '-1' -> cpu
         """
         self._model_to_initialize = None
         self._tokenizer = None
@@ -33,11 +34,12 @@ class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
 
     def extract_feature(self, sample_input):
         """
-
+        It does extract the feature from the input. Framework, model and layer HAVE TO be already set with their set
+        methods.
         Args:
-            sample_input:
+            sample_input: the sample preprocessed within the dataset class
 
-        Returns:
+        Returns: a numpy array that will be put in a .npy file calling the right Dataset Class' method
 
         """
         audio = sample_input[0]
