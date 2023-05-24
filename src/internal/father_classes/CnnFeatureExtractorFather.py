@@ -19,7 +19,7 @@ class CnnFeatureExtractorFather:
     def set_framework(self, framework_list):
         """
         It set the framework to use as e.g: 'torch', 'tensorflow', 'transformers', 'torchaudio'
-        :param framework_list: both list of String or String are acceptable
+        :param framework_list: the list of String of the framework. It's acceptable to have only one item in the list
         """
         self._framework_list = framework_list
 
