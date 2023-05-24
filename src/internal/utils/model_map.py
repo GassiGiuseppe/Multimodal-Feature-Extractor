@@ -1,3 +1,5 @@
+# LEGACY FILE: IT HAS NO LONGER USE
+
 import tensorflow as tf
 import torchvision.models as models
 
