@@ -4,17 +4,23 @@ import yaml
 
 class YamlFileManager:
     def __init__(self, yaml_file_path):
+        """
+        It manages a general Yaml file, it is created with the scope to only read this kind of file
+        :param yaml_file_path: the path of the file as a String. It is preferred to be the absolute path, but there
+        are some ways to utilize a not perfect path
+        """
         self._correct_yaml_file_path(yaml_file_path)
 
     def _correct_yaml_file_path(self, old_path):
         """
-        if old_path links to a directory the method search a 'yaml' file in the directory. Otherwise, if it poinst to a
+        It corrects the path to the absolute one.
+        if old_path links to a directory the method search a 'yaml' file in the directory. Otherwise, if it points to a
         file, all is fine. Else the method try to correct the path in a working one, if it fails raise an error
         Args:
-            old_path: the path given from the user, here starts the search for the file
+            old_path: the path given from the user. It is a String
 
         Returns:
-            it returns nothing but set the _yaml_file_path that points directly to the yaml file
+            it returns nothing but set the _yaml_file_path that points directly to the yaml file. It is a String
 
         """
         # the path can be:
