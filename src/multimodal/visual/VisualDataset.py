@@ -12,6 +12,14 @@ from src.internal.utils.model_map import tensorflow_models_for_normalization
 class VisualDataset(DatasetFather, ABC):
 
     def __init__(self, input_directory_path, output_directory_path, model_name='VGG19', reshape=(224, 224)):
+        """
+        Manage the Image Dataset (folder of input and folder of output).
+        It will Manage data of input (and their preprocessing), and data of output
+        :param input_directory_path: folder of the input data to elaborate as String
+        :param output_directory_path: folder of where put Output as String, it will be created if does not exist
+        :param model_name: String of the model to use, it can be reset later
+        :param reshape: Tuple (int, int), is width and height for the resize, it can be reset later
+        """
         super().__init__(input_directory_path, output_directory_path, model_name)
         self._reshape = reshape
 
@@ -19,6 +27,11 @@ class VisualDataset(DatasetFather, ABC):
         # print(model_map_path)
 
     def __getitem__(self, idx):
+        """
+        It retrieves a sample preprocessed given its id (the id refers to the sorted filenames)
+        :param idx: Integer, indicates the number associated to the file o elaborate
+        :return: the image blob data preprocessed
+        """
         image_path = os.path.join(self._input_directory_path, self._filenames[idx])
         sample = Image.open(image_path)
 
@@ -35,6 +48,11 @@ class VisualDataset(DatasetFather, ABC):
             return norm_sample
 
     def _pre_processing(self, sample):
+        """
+        It prepares the data to the feature extraction
+        :param sample: the image just read
+        :return: the image resized and normalized
+        """
         # resize
         if self._reshape:
             res_sample = sample.resize(self._reshape, resample=Image.BICUBIC)
@@ -63,4 +81,8 @@ class VisualDataset(DatasetFather, ABC):
         return norm_sample
 
     def set_reshape(self, reshape):
+        """
+        Set the reshape data to reshape the image (resize)
+        :param reshape: Tuple (int, int), is width and height
+        """
         self._reshape = reshape
