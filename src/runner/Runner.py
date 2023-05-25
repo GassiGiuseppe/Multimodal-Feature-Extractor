@@ -12,6 +12,13 @@ from src.multimodal.audio.AudioCnnFeatureExtractor import AudioCnnFeatureExtract
 
 
 def _execute_extraction_from_models_list(models, extractor, dataset, modality_type):
+    """
+    Takes in input the class of Dataset and Extractor, then for every model, for every layer of the model,
+    :param models: dicts of data (see Config.get_models)
+    :param extractor: class Extractor
+    :param dataset: class Dataset
+    :param modality_type: 'audio'/'visual'/'textual'
+    """
     for model in models:
         logging.info(' Now using model: %s', str(model['name']))
 
@@ -50,12 +57,19 @@ def _execute_extraction_from_models_list(models, extractor, dataset, modality_ty
 class MultimodalFeatureExtractor:
 
     def __init__(self, config_file_path=r'./config/config.yml'):
+        """
+        It instantiates the framework. Note the config file is a yml file
+        :param config_file_path: As a String, it could be the absolute path, or the path to the folder of the confg file
+        """
         self._config = Config(config_file_path)
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
         # set gpu to use
         os.environ['CUDA_VISIBLE_DEVICES'] = self._config.get_gpu()
 
     def execute_extractions(self):
+        """
+        It executes all the extraction that have to be done
+        """
         self.do_item_visual_extractions()
         self.do_interaction_visual_extractions()
         self.do_item_textual_extractions()
@@ -133,14 +147,16 @@ class MultimodalFeatureExtractor:
             textual_dataset.set_type_of_extraction('interactions')
             _execute_extraction_from_models_list(models, cnn_feature_extractor, textual_dataset, 'textual')
 
-    def execute_extractions_second_delete(self):
+    # DEPRECATED:
+    def __execute_extractions_second_delete(self):
         visual_work_env_ls = self._config.get_visual_working_environment_list()
         print(visual_work_env_ls)
         # self._execute_visual_extractions(visual_work_env_ls)
         textual_work_env_ls = self._config.get_textual_working_environment_list()
         print(textual_work_env_ls)
 
-    def _execute_visual_extractions_delete(self, work_env_ls):
+    # DEPRECATED
+    def __execute_visual_extractions_delete(self, work_env_ls):
         for work_env in work_env_ls:
             if self._config.has_config(work_env, 'visual'):
                 # logging...
