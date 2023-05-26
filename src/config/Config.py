@@ -2,6 +2,23 @@ import os
 from src.internal.utils.YamlFileManager import YamlFileManager
 
 
+def _clean_preprocessing_flag_of_models(model, type_of_extraction):
+    # here all the different flags of preprocessing will be renamend under the same name to easily manage the data
+    # in future
+    data_flag = ''
+
+    if type_of_extraction == 'textual':
+        data_flag = model.pop('clear_text')
+    elif type_of_extraction == 'visual':
+        data_flag = model.pop('reshape')
+    elif type_of_extraction == 'audio':
+        # Right now there is no preprocessing flag but one is needed for code clearance
+        data_flag = None
+
+    model.update({'preprocessing_flag': data_flag})
+    return model
+
+
 class Config:
 
     def __init__(self, config_file_path):
@@ -121,7 +138,7 @@ class Config:
 
         Args:
             origin_of_elaboration: 'items' or 'interactions'
-            type_of_extraction: 'textual' or 'visual'
+            type_of_extraction: 'textual', 'visual' or 'audio'
 
         Returns: a list of the models, every model is a dict with
         'name': the name of the model, in same cases as transformers is repo/model name,
@@ -137,6 +154,9 @@ class Config:
             # output_layers has to be a list
             if not isinstance(model['output_layers'], list):
                 model.update({'output_layers': [model['output_layers']]})
+
+            # preprocessing flags cleaning
+            model = _clean_preprocessing_flag_of_models(model, type_of_extraction)
 
             # Framework elaboration
             # - if INPUT FRAMEWORK is ['tensorflow', 'torch'] then two different model dicts will be added to the list,
@@ -199,5 +219,3 @@ class Config:
                     model.update({'framework': ['torch', 'transformers']})
 
         return models
-
-

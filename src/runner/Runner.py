@@ -25,14 +25,14 @@ def _execute_extraction_from_models_list(models, extractor, dataset, modality_ty
         # set framework
         extractor.set_framework(model['framework'])
         dataset.set_framework(model['framework'])
+
         # set model
         extractor.set_model(model['name'])
         dataset.set_model(model['name'])
-        # set reshape
-        if modality_type == 'visual':
-            dataset.set_reshape(model['reshape'])
-        elif modality_type == 'textual':
-            dataset.set_clean_flag(model['clear_text'])
+
+        # set preprocessing flag
+        dataset.set_preprocessing_flag(model['preprocessing_flag'])
+
         # execute extractions
         for model_layer in model['output_layers']:
 

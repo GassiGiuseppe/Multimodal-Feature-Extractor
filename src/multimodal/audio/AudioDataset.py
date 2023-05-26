@@ -62,5 +62,8 @@ class AudioDataset(DatasetFather):
             return [waveform, bundle.sample_rate]
         elif 'transformers' in self._framework_list:
             pre_processor = torchaudio.transforms.Resample(rate, 16000)
-            resempled_audio = pre_processor(audio)
-            return [resempled_audio, 16000]
+            resampled_audio = pre_processor(audio)
+            return [resampled_audio, 16000]
+
+    def set_preprocessing_flag(self, preprocessing_flag):
+        return

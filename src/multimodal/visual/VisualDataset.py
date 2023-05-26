@@ -86,3 +86,6 @@ class VisualDataset(DatasetFather, ABC):
         :param reshape: Tuple (int, int), is width and height
         """
         self._reshape = reshape
+
+    def set_preprocessing_flag(self, preprocessing_flag):
+        self._reshape = preprocessing_flag

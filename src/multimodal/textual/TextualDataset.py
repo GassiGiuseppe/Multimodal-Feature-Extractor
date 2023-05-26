@@ -130,6 +130,9 @@ class TextualDataset(DatasetFather):
         """
         self._text_to_be_cleaned = text_to_be_cleaned
 
+    def set_preprocessing_flag(self, preprocessing_flag):
+        self._text_to_be_cleaned = preprocessing_flag
+
     def set_type_of_extraction(self, type_of_extraction):
         """
         It set the origin of the data, from item or users interactions, it is needed later to read correctly the tsv

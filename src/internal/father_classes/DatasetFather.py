@@ -71,5 +71,9 @@ class DatasetFather:
     def _pre_processing(self, sample):
         pass
 
+    @abstractmethod
+    def set_preprocessing_flag(self, preprocessing_flag):
+        pass
+
     def set_framework(self, framework_list):
         self._framework_list = framework_list
