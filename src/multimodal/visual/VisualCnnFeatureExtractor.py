@@ -7,7 +7,7 @@ import torchvision
 import tensorflow
 # from torchvision.models import ResNet50_Weights
 
-from src.internal.utils.model_map import tensorflow_models_for_extraction, torch_models_for_extraction
+
 from src.internal.father_classes.CnnFeatureExtractorFather import CnnFeatureExtractorFather
 import sys
 
@@ -21,12 +21,14 @@ class VisualCnnFeatureExtractor(CnnFeatureExtractorFather):
         """
         super().__init__(gpu)
 
-    def set_model(self, model_name):
+    def set_model(self, model):
         """
         Args:
             model_name: is the name of the model to use.
         Returns: nothing but it initializes the protected model attribute, later used for extraction
+        :param model:
         """
+        model_name = model['name']
         torchvision_list = list(torchvision.models.__dict__)
         tensorflow_keras_list = list(tensorflow.keras.applications.__dict__)
 

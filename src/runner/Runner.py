@@ -27,7 +27,8 @@ def _execute_extraction_from_models_list(models, extractor, dataset, modality_ty
         dataset.set_framework(model['framework'])
 
         # set model
-        extractor.set_model(model['name'])
+        # extractor.set_model(model['name'])
+        extractor.set_model(model)
         dataset.set_model(model['name'])
 
         # set preprocessing flag

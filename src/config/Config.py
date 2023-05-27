@@ -19,6 +19,14 @@ def _clean_preprocessing_flag_of_models(model, type_of_extraction):
     return model
 
 
+def _clean_unique_flags_of_models(model, type_of_extraction):
+    if type_of_extraction == 'textual':
+        # to maintain the runner agnostic, when it gives the model name to the extractor, it also need to give it the
+        # task that the model have to do.
+        # so in textual...
+        print('nah, after')
+
+
 class Config:
 
     def __init__(self, config_file_path):

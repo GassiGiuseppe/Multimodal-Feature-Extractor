@@ -6,7 +6,6 @@ from torchvision import transforms
 import tensorflow
 import numpy as np
 import os
-from src.internal.utils.model_map import tensorflow_models_for_normalization
 
 
 class VisualDataset(DatasetFather, ABC):
@@ -24,7 +23,7 @@ class VisualDataset(DatasetFather, ABC):
         self._reshape = reshape
 
     # def set_model_map(self, model_map_path):
-        # print(model_map_path)
+    # print(model_map_path)
 
     def __getitem__(self, idx):
         """

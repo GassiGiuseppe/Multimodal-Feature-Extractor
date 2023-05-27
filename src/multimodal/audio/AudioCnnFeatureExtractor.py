@@ -18,16 +18,20 @@ class AudioCnnFeatureExtractor(CnnFeatureExtractorFather):
         self._tokenizer = None
         super().__init__(gpu)
 
-    def set_model(self, model_name):
+    def set_model(self, model):
         """
         Args:
             model_name: is the name of the model to use.
         Returns: nothing but it initializes the protected model, later used for extraction
+        :param model:
         """
+        model_name = model['name']
         self._model_name = model_name
         if 'torch' in self._framework_list or 'torchaudio' in self._framework_list:
             model_to_initialize = getattr(torchaudio.pipelines, model_name)
             self._model = model_to_initialize.get_model()
+            self._model.to(self._device)
+            self._model.eval()
             # self._model.to(self._gpu)
         elif 'transformers' in self._framework_list:
             self._model = Wav2Vec2Model.from_pretrained(self._model_name)
