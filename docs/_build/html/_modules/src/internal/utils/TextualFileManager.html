@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.internal.utils.TextualFileManager &#8212; Multimodal-Feature-Extractor 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.internal.utils.TextualFileManager</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+
+<div class="viewcode-block" id="TextualFileManager"><a class="viewcode-back" href="../../../../src.internal.utils.html#src.internal.utils.TextualFileManager.TextualFileManager">[docs]</a><span class="k">class</span> <span class="nc">TextualFileManager</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It manages the input textual file and its contents. Note that it is used also to build the names of the outputs</span>
+<span class="sd">        files of the textual extraction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_internal_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type_of_extraction</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="TextualFileManager.set_type_of_extraction"><a class="viewcode-back" href="../../../../src.internal.utils.html#src.internal.utils.TextualFileManager.TextualFileManager.set_type_of_extraction">[docs]</a>    <span class="k">def</span> <span class="nf">set_type_of_extraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_of_extraction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set type  of extraction which is the source of the input: from user interaction or from items. Here it is needed</span>
+<span class="sd">        to across correctly the file and for build the name of the output file at the end of the extraction</span>
+
+<span class="sd">        :param type_of_extraction: &#39;interactions&#39; or &#39;items&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type_of_extraction</span> <span class="o">=</span> <span class="n">type_of_extraction</span></div>
+
+<div class="viewcode-block" id="TextualFileManager.set_file_path"><a class="viewcode-back" href="../../../../src.internal.utils.html#src.internal.utils.TextualFileManager.TextualFileManager.set_file_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It sets the absolute path of the textual input file that later will be open.</span>
+<span class="sd">        :param file_path: absolute path as a string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_path</span> <span class="o">=</span> <span class="n">file_path</span></div>
+
+<div class="viewcode-block" id="TextualFileManager.build_path_from_id"><a class="viewcode-back" href="../../../../src.internal.utils.html#src.internal.utils.TextualFileManager.TextualFileManager.build_path_from_id">[docs]</a>    <span class="k">def</span> <span class="nf">build_path_from_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It builds the name of the output file of a single sentence processed. This will later be used to build the</span>
+<span class="sd">        complete path of the single output file</span>
+<span class="sd">        :param id_: the row id as an int, here it used only to build the name</span>
+<span class="sd">        :return: the output name file as a string. It is not the complete path, nor the complete name of the file (it</span>
+<span class="sd">        misses the extension)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_of_extraction</span> <span class="o">==</span> <span class="s1">&#39;interactions&#39;</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_path</span><span class="p">[</span><span class="n">id_</span><span class="p">][</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">user</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_of_extraction</span> <span class="o">==</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TextualFileManager.initiate_element_list_and_get_len"><a class="viewcode-back" href="../../../../src.internal.utils.html#src.internal.utils.TextualFileManager.TextualFileManager.initiate_element_list_and_get_len">[docs]</a>    <span class="k">def</span> <span class="nf">initiate_element_list_and_get_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the file, instantiate the internal list of what it contains and returns the len of sentences to elaborate</span>
+<span class="sd">        :return: len of object to elaborate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">internal_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># element_list = []</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+            <span class="n">file_dict</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">file_dict</span><span class="p">:</span>
+                <span class="n">internal_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="c1"># if self._type_of_extraction == &#39;interactions&#39;:</span>
+                <span class="c1">#     element_list.append(row[&#39;comment&#39;])</span>
+                <span class="c1"># elif self._type_of_extraction == &#39;items&#39;:</span>
+                <span class="c1">#     element_list.append(row[&#39;description&#39;])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_internal_list</span> <span class="o">=</span> <span class="n">internal_list</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">internal_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TextualFileManager.get_item_from_id"><a class="viewcode-back" href="../../../../src.internal.utils.html#src.internal.utils.TextualFileManager.TextualFileManager.get_item_from_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_from_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It gives the sentence to elaborate for a specific row of the file. If the origin of elaboration is from</span>
+<span class="sd">        interactions, it searches the sentence in the &#39;comment&#39; column, otherwise if the origin is from item description</span>
+<span class="sd">        it searches the sentence in the &#39;description&#39; column</span>
+<span class="sd">        :param idx: the row from which retrieve the sentence.</span>
+<span class="sd">        :return:  the sentence as a string, preprocessing is needed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_of_extraction</span> <span class="o">==</span> <span class="s1">&#39;interactions&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_of_extraction</span> <span class="o">==</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span></div></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Multimodal-Feature-Extractor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Daniele Malitesta, Giuseppe Gassi, Claudio Pomo, Tommaso Di Noia.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -15,6 +15,7 @@ class TextualCnnFeatureExtractor(CnnFeatureExtractorFather):
         later change one of them as needed.
         :param gpu: gpu: String on which is explained which gpu to use. '-1' -> cpu
         """
+        self._pipeline = None
         self._tokenizer = None
         super().__init__(gpu)
 
@@ -33,6 +34,7 @@ class TextualCnnFeatureExtractor(CnnFeatureExtractorFather):
             built_pipeline = pipeline(model_task, model=model_name)
             self._model = built_pipeline.model
             self._tokenizer = built_pipeline.tokenizer
+            # self._pipeline = built_pipeline
             # sentiment_pipeline = pipeline(model=model_name)
             # model = list(sentiment_pipeline.model.children())[-3]
             # model.eval()
