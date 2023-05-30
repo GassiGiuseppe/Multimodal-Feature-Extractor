@@ -69,9 +69,9 @@ termcolor==1.1.0
 threadpoolctl==2.1.0
 tokenizers==0.12.1
 torch==2.0.1
-torchaudio==0.10.2
-torchtext==0.11.2
-torchvision==0.11.3
+torchaudio==2.0.2
+torchtext==0.15.2
+torchvision==0.15.2
 tqdm==4.64.1
 transformers==4.18.0
 typing-extensions==3.7.4.3
