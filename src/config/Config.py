@@ -5,6 +5,7 @@ from src.internal.utils.YamlFileManager import YamlFileManager
 def _clean_preprocessing_flag_of_models(model, type_of_extraction):
     # here all the different flags of preprocessing will be renamend under the same name to easily manage the data
     # in future
+    # nn
     data_flag = ''
 
     if type_of_extraction == 'textual':
