@@ -57,12 +57,16 @@ def _execute_extraction_from_models_list(models, extractor, dataset, modality_ty
 
 class MultimodalFeatureExtractor:
 
-    def __init__(self, config_file_path=r'./config/config.yml'):
+    def __init__(self, config_file_path=None, command_as_ls_of_dict=None):
         """
         It instantiates the framework. Note the config file is a yml file
         :param config_file_path: As a String, it could be the absolute path, or the path to the folder of the confg file
         """
-        self._config = Config(config_file_path)
+        if config_file_path is None and command_as_ls_of_dict is None:
+            raise AttributeError('Please specify one Input of configuration: a file yaml path as string (calling the '
+                                 'attr: config_file_path) OR a command as string (calling the attr: command_as_string')
+
+        self._config = Config(config_file_path, command_as_ls_of_dict)
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
         # set gpu to use
         os.environ['CUDA_VISIBLE_DEVICES'] = self._config.get_gpu()

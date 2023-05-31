@@ -30,7 +30,7 @@ def _clean_unique_flags_of_models(model, type_of_extraction):
 
 class Config:
 
-    def __init__(self, config_file_path):
+    def __init__(self, config_file_path, command_as_ls_of_dict):
         """
         Manage the configuration within the config yaml file. This configuration are later needed to understand what
         to do
@@ -39,8 +39,13 @@ class Config:
         of the Multimodal-Feature-Extractor folder
         """
         # both absolute and relative path are fine
-        self._yaml_manager = YamlFileManager(config_file_path)
-        self._data_dict = self._yaml_manager.get_raw_dict()
+
+        if command_as_ls_of_dict is None:
+            self._yaml_manager = YamlFileManager(config_file_path)
+            self._data_dict = self._yaml_manager.get_raw_dict()
+        else:
+            self._data_dict = command_as_ls_of_dict
+
         self._data_dict = self.__clean_dict(self._data_dict)
 
     def __clean_dict(self, data):
