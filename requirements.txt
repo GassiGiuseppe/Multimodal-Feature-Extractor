@@ -7,3 +7,4 @@ hugginface-hub==0.14.1
 PyYaml
 tqdm
 transformers
+tokenizers
